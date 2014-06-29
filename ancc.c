@@ -6,15 +6,17 @@
 #include "ancc.h"
 
 int main(){
-    //token_t t;
-    char t;
+    token_t t;
+    //char t;
     pfin = fopen("anlex.c", "rb");
-    /*do{
-        t = lexparse();
-        printf("%d, \"%s\"\n", t.no, t.val);
-    }while(t.no!=NAL);*/
     read_source();
-    while((t=GF())){
+    do{
+        t = lexparse();
+        printf("%s ", t.val);
+    }while(t.no!=NAL);
+/*    read_source();
+    while((t=CGF())){
         putchar(t);
-    }
+    }*/
+    return 1;
 }

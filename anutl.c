@@ -81,8 +81,8 @@ char _gc(int fwd){
         source+=!!fwd;
         return ch;
     }
-    if (!fwd) return '\n';
     if (!cur->next) return 0;
+    if (!fwd) return '\n';
     cur = cur->next;
     source = cur->source;
     lineno = cur->lno;
@@ -150,12 +150,12 @@ char* strpool(const char* str){
         p->next = malloc(sizeof(pool_t));
         if (!p->next) badalloc();
         p->next->next = 0;
-        return (p->next->val = strdup(str));
+        return (p->next->val = _strdup(str));
     }else{
         pool = malloc(sizeof(pool_t));
         if (!pool) badalloc();
         pool->next = 0;
-        return (pool->val = strdup(str));
+        return (pool->val = _strdup(str));
     }
 }
 
@@ -174,24 +174,27 @@ void eprintf(const char* message, ...){
     */
 
     /* First, roll back to the last '\n'. */
-    while(s > intl_s){
+    /*while(s > intl_s){
         if (*(s-1) == '\n'){
             break;
         }
         s--;
-    }
+    }*/
+    CLA();
+    s = cur->source;
 
     /* Then, print out error message. */
     va_start(vl, message);
     vsnprintf(buffer, 256, message, vl);
     va_end(vl);
-    printf(":%d:%u: %s\n", lineno, 1U + (unsigned)((uintptr_t)source - (uintptr_t)s), buffer);
+    printf("\n:%d:%u: %s\n", lineno, 1U + (unsigned)((uintptr_t)source - (uintptr_t)s), buffer);
 
     /* Print a single line of source code. */
-    p = s;
-    while(*p!='\n')
+    /*p = s;
+    while(*p)
         putchar(*p++);
-    putchar('\n');
+    putchar('\n');*/
+    printf("%s\n", cur->source);
 
     /* Print a ^ mark. */
     p = s;
@@ -199,6 +202,16 @@ void eprintf(const char* message, ...){
         putchar(' ');
     putchar('^');
     putchar('\n');
+}
+
+/* == token_t constructor. ======================== */
+token_t token(int no, char* pos, sourceline_t* cur, char* val){
+	token_t t;
+	t.no = no;
+	t.pos = pos;
+	t.cur = cur;
+	t.val = val;
+	return t;
 }
 
 /* == Character recognizer. ======================= */

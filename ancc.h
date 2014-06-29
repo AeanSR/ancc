@@ -5,6 +5,7 @@
 
 #ifndef __ANCC_HEADER_INCLUDED_
 #define __ANCC_HEADER_INCLUDED_
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,16 +21,19 @@ typedef struct pool_t{
     struct pool_t* next;
     char* val;
 } pool_t;
+typedef struct sourceline_t{
+    char* source;
+    int lno;
+    struct sourceline_t* next;
+} sourceline_t;
 typedef struct{
     int no;
     char* pos;
+    sourceline_t* cur;
     char* val;
 } token_t;
-typedef struct ppsblock_t{
-    char* source;
-    int lno;
-    struct ppsblock_t* next;
-} sourceline_t;
+token_t token(int no, char* pos, sourceline_t* cur, char* val);
+
 typedef struct _variadic_arg_1_t{
     int d;
 }_variadic_arg_1_t;
@@ -55,16 +59,14 @@ char* read_line(FILE* f);
 char _gc(int fwd);
 char _lagc(size_t k);
 char _gf(size_t k);
-#define LA(...) _lagc((_variadic_arg_1_t){__VA_ARGS__}.d)
-#define GF(...) _gf((_variadic_arg_1_t){__VA_ARGS__}.d==0?1:(_variadic_arg_1_t){__VA_ARGS__}.d)
+//#define CLA(...) _lagc((_variadic_arg_1_t){__VA_ARGS__}.d)
+//#define CGF(...) _gf((_variadic_arg_1_t){__VA_ARGS__}.d==0?1:(_variadic_arg_1_t){__VA_ARGS__}.d)
+#define CLA(...) _lagc((int)(__VA_ARGS__##.1))
+#define CGF(...) _gf((int)(__VA_ARGS__##.1)?(int)(__VA_ARGS__##.1):1.1)
 void mwrite(char s);
 void mclear();
 char* strpool(const char* str);
 void eprintf(const char* message, ...);
-
-#define STR2(v) #v
-#define STR(v) STR2(v)
-#define P(...) strpool(STR(__VA_ARGS__))
 
 enum{
     IDENT,
