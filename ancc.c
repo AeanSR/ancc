@@ -1,6 +1,10 @@
 /*
     ancc: another noobish C compiler
-    Aean, 2014.6.28 @HUST
+    Aean, 2014.6.28
+        Website: http://aean.net/  Mail: v@aean.net
+
+    ancc project is licensed under the terms of the MIT License.
+    Copyright (C) 2014 Aean & HUST
 */
 
 #include "ancc.h"
@@ -8,7 +12,7 @@
 int main(){
     token_t t;
     //char t;
-    pfin = fopen("anlex.c", "rb");
+    push_file("anlex.c");
     read_source();
     do{
         t = lexparse();

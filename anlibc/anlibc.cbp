@@ -2,26 +2,31 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="ancc" />
+		<Option title="anlibc" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="anccd" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug\" />
-				<Option type="1" />
+				<Option output="anlibcd" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output=".\" />
+				<Option type="2" />
 				<Option compiler="gcc" />
-				<Option projectCompilerOptionsRelation="1" />
+				<Option createDefFile="1" />
 				<Compiler>
+					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="ancc" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release\" />
-				<Option type="1" />
+				<Option output="anlibc" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output=".\" />
+				<Option type="2" />
 				<Option compiler="gcc" />
+				<Option createDefFile="1" />
 				<Compiler>
+					<Add option="-Wall" />
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
@@ -29,23 +34,15 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Compiler>
-			<Add option="-Wall" />
-		</Compiler>
-		<Unit filename="ancc.c">
+		<Unit filename="anlibc.h" />
+		<Unit filename="include\assert.h" />
+		<Unit filename="include\stddef.h" />
+		<Unit filename="include\stdint.h" />
+		<Unit filename="include\string.h" />
+		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="ancc.h" />
-		<Unit filename="anlex.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="anlut.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="anprp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="anutl.c">
+		<Unit filename="string.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

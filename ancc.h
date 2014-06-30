@@ -1,6 +1,10 @@
 /*
     ancc: another noobish C compiler
-    Aean, 2014.6.27 @HUST
+    Aean, 2014.6.27
+        Website: http://aean.net/  Mail: v@aean.net
+
+    ancc project is licensed under the terms of the MIT License.
+    Copyright (C) 2014 Aean & HUST
 */
 
 #ifndef __ANCC_HEADER_INCLUDED_
@@ -13,6 +17,14 @@
 #include <time.h>
 #include <stdarg.h>
 
+/*
+    An argument followed with __ANCC_BY_VAL means the pointer passed into will be duplicated.
+    If the pointer is allocated on heap, caller take the respons to free that pointer.
+    If the pointer is volatile or constant, callee take the respons to preserve a copy of data.
+*/
+#define __ANCC_BY_VAL
+#define __ANCC_SIZE_LIMIT(bytes)
+
 typedef struct{
     char* name;
     int   no;
@@ -24,8 +36,15 @@ typedef struct pool_t{
 typedef struct sourceline_t{
     char* source;
     int lno;
+    char* fname;
     struct sourceline_t* next;
 } sourceline_t;
+typedef struct sourcefile_t{
+    char* fname;
+    FILE* fp;
+    struct sourcefile_t* next;
+    struct sourcefile_t* prev;
+} sourcefile_t;
 typedef struct{
     int no;
     char* pos;
@@ -33,17 +52,15 @@ typedef struct{
     char* val;
 } token_t;
 token_t token(int no, char* pos, sourceline_t* cur, char* val);
-
+/*
 typedef struct _variadic_arg_1_t{
     int d;
 }_variadic_arg_1_t;
-
+*/
 extern char* memory;
 extern keyword_t keylist[];
 extern char* source;
 extern sourceline_t* cur;
-extern FILE* pfin;
-extern int lineno;
 
 int is_digit(char c);
 int is_octaldigit(char c);
@@ -62,11 +79,16 @@ char _gf(size_t k);
 //#define CLA(...) _lagc((_variadic_arg_1_t){__VA_ARGS__}.d)
 //#define CGF(...) _gf((_variadic_arg_1_t){__VA_ARGS__}.d==0?1:(_variadic_arg_1_t){__VA_ARGS__}.d)
 #define CLA(...) _lagc((int)(__VA_ARGS__##.1))
-#define CGF(...) _gf((int)(__VA_ARGS__##.1)?(int)(__VA_ARGS__##.1):1.1)
+#define CGF(...) _gf((int)(__VA_ARGS__##.1)?(int)(__VA_ARGS__##.1):1)
+void reset_char_stream();
+FILE* file_pointer();
+char* file_name();
+void push_file(const char* filename __ANCC_BY_VAL);
+void pop_file();
 void mwrite(char s);
 void mclear();
-char* strpool(const char* str);
-void eprintf(const char* message, ...);
+char* strpool(const char* str __ANCC_BY_VAL);
+void eprintf(const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ...);
 
 enum{
     IDENT,
@@ -91,6 +113,14 @@ enum{
     PUNC41, PUNC42, PUNC43, PUNC44, PUNC45, PUNC46, PUNC47, PUNC48,
     NAL,
 };
+
+typedef struct macro_t{
+    char* macro_name;
+    int argc;
+    int variadic_arg;
+    char* replacement;
+    struct macro_t* next;
+} macro_t;
 
 token_t lexparse();
 
