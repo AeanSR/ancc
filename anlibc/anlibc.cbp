@@ -4,14 +4,14 @@
 	<Project>
 		<Option title="anlibc" />
 		<Option pch_mode="2" />
-		<Option compiler="gcc" />
+		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug">
-				<Option output="anlibcd" prefix_auto="0" extension_auto="1" />
+				<Option output="anlibcd.lib" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
 				<Option object_output=".\" />
 				<Option type="2" />
-				<Option compiler="gcc" />
+				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -19,15 +19,17 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="anlibc" prefix_auto="0" extension_auto="1" />
+				<Option output="anlibc.lib" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
 				<Option object_output=".\" />
 				<Option type="2" />
-				<Option compiler="gcc" />
+				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-O2" />
+					<Add option="/arch:SSE" />
+					<Add option="/O2" />
+					<Add option="/NODEFAULTLIB" />
+					<Add option="/Oi-" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -36,6 +38,8 @@
 		</Build>
 		<Unit filename="anlibc.h" />
 		<Unit filename="include\assert.h" />
+		<Unit filename="include\limits.h" />
+		<Unit filename="include\stdarg.h" />
 		<Unit filename="include\stddef.h" />
 		<Unit filename="include\stdint.h" />
 		<Unit filename="include\string.h" />

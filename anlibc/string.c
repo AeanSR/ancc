@@ -11,7 +11,7 @@
 /* Bithack to check zero byte existance in uint64_t type. */
 #define haszerobyte(v) (((v) - 0x01010101UL) & ~(v) & 0x80808080UL)
 
-void *memcpy(void * __ANCC_RESTRICT s1, const void * __ANCC_RESTRICT s2, size_t n)
+void *memcpy(void * __ANCC_RESTRICT dst, const void * __ANCC_RESTRICT src, size_t n)
 {
 	char *dst_c;
 	const char *src_c;
@@ -19,8 +19,8 @@ void *memcpy(void * __ANCC_RESTRICT s1, const void * __ANCC_RESTRICT s2, size_t 
 	const uint32_t *src_u;
 	ptrdiff_t i;
 
-	dst_u = (uint32_t*)s1;
-	src_u = (const uint32_t*)s2;
+	dst_u = (uint32_t*)dst;
+	src_u = (const uint32_t*)src;
 	i = (n / sizeof(uint32_t)) - 7;
 	/* Loop unroll. */
 	for (; i > 0; i -= 8){
@@ -44,15 +44,21 @@ void *memcpy(void * __ANCC_RESTRICT s1, const void * __ANCC_RESTRICT s2, size_t 
 	while (i-- > 0)
 		*dst_c++ = *src_c++;
 
-	return s1;
+	return dst;
 }
 
-void *memmove(void *s1, const void *s2, size_t n)
+void *memmove(void *dst, const void *src, size_t n)
 {
-    void* tmps = alloca(n);
-    memcpy(tmps, s2, n);
-    memcpy(s1, tmps, n);
-    return s1;
+    char* dst_c = dst;
+    const char* src_c = src;
+
+    if (dst_c <= src_c || dst_c >= (src_c + n))
+        memcpy(dst, src, n);
+    else
+        while (n--)
+            *dst_c-- = *src_c--;
+
+    return dst;
 }
 
 char* strcpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src)
@@ -72,6 +78,194 @@ char* strcpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src)
 		while ((*cp++ = *csp++));
 	}
 	return dst;
+}
+
+char* strncpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src, size_t n)
+{
+    size_t l = strlen(src);
+	return memcpy(dst, src, n > l ? n : l);
+}
+
+char* strcat(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src)
+{
+	strcpy(dst + strlen(dst), src); /* Reuse strlen & strcpy. */
+	return dst;
+}
+
+char* strncat(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src, size_t n)
+{
+	size_t ls = strlen(src);
+	size_t ld = strlen(dst);
+	if (n > ls){
+        memcpy(dst + ld, src, n);
+        *(dst + ld + n) = '\0';
+    }else{
+        memcpy(dst + ld, src, ls);
+    }
+	return dst;
+}
+
+int memcmp(const void *s1, const void *s2, size_t n)
+{
+    const unsigned char *l = s1;
+    const unsigned char *r = s2;
+    while(n--){
+        if (*l != *r)
+            return ((signed int)*l - (signed int)*r);
+        l++;
+        r++;
+    }
+    return 0;
+}
+
+int strcmp(const char *s1, const char *s2)
+{
+    while(*s1 && *s2){
+        if (*s1 != *s2) return ((signed int)*s1 - (signed int)*s2);
+        s1++;
+        s2++;
+    }
+    return ((signed int)*s1 - (signed int)*s2);
+}
+
+int strncmp(const char *s1, const char *s2, size_t n)
+{
+    while(n-- && *s1 && *s2){
+        if (*s1 != *s2) return ((signed int)*s1 - (signed int)*s2);
+        s1++;
+        s2++;
+    }
+    return n ? ((signed int)*s1 - (signed int)*s2) : 0;
+}
+
+void* memchr(const void* ptr, int _ch, size_t n)
+{
+    const unsigned char* _str = ptr;
+	unsigned char ch = (unsigned char)_ch;
+	while (n--){
+		if (*_str == ch) return (void*)_str;
+		_str++;
+	}
+	return NULL;
+}
+
+char* strchr(const char* _str, int _ch)
+{
+	char ch = _ch & 0xff;
+	uint32_t mask = ch;
+	const uint32_t* i32str = (const uint32_t*)_str;
+
+	/* Fill a mask with ch. */
+	mask |= mask << 8;
+	mask |= mask << 16;
+
+	/* Pass though while \0 or ch not found. */
+	while (!(haszerobyte(*i32str) || haszerobyte(*i32str^mask)))
+		i32str++;
+
+	/* Find the position of first \0 or ch. */
+	_str = (const char*)i32str;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	if (*_str == ch) return (char*)_str;
+	else if (*_str == 0) return NULL;
+	_str++;
+	return *_str ? (char*)_str : NULL;
+}
+
+char* strstr(const char* _str, const char* _ch)
+{
+
+	/*
+		Brute Force Algorithm - the most silly algorithm with least
+		preprocessing / extra memory spending. Compare each byte and
+		shift by exactly 1 byte on fails.
+		This algorithm won't cause memory exceptions, and really easy
+		to write in such a data parallel manner.
+	*/
+
+	const uint32_t* i32str_p = (const uint32_t*)_str;
+	const uint32_t* i32ch_p = (const uint32_t*)_ch;
+	const char *cstr_p, *cch_p;
+	size_t needle_len, i;
+	uint32_t i32reg;
+	int ok = *_str == *_ch; /* Check if _ch is prefix of _str while looking for string tail. */
+
+	/* Do an init check may avoid wasted prefix check. */
+	if (ok) {
+		/* Check prefix. */
+		while (!(haszerobyte(*i32str_p) || haszerobyte(*i32ch_p)))
+			ok = ok & (*i32str_p++ == *i32ch_p++);
+		cstr_p = (const char*)i32str_p;
+		cch_p = (const char*)i32ch_p;
+		while (*cstr_p && *cch_p)
+			ok = ok & (*cstr_p++ == *cch_p++);
+
+		if (*cch_p) return (char*)cstr_p; /* If reached end of _str first, it is unable to match. */
+		if (ok) return (char*)_str; /* If found end of _ch, and still ok, it's prefix of _str. */
+	}else{
+		/* Don't check prefix. */
+		while (!(haszerobyte(*i32str_p) || haszerobyte(*i32ch_p)))
+			i32str_p++, i32ch_p++;
+		cstr_p = (const char*)i32str_p;
+		cch_p = (const char*)i32ch_p;
+		while (*cstr_p && *cch_p)
+			cstr_p++, cch_p++;
+
+		if (*cch_p) return (char*)cstr_p; /* If reached end of _str first, it is unable to match. */
+	}
+	needle_len = cch_p - _ch; /* Now we got length of _ch. */
+
+	if (needle_len > sizeof(uint32_t)){
+		longcut:
+		_str = strchr(_str+1, *_ch); /* Cut _str's head off. */
+		if (!_str) return (char*)_str;
+		i32ch_p = (const uint32_t*)_ch;
+		i32str_p = (const uint32_t*)_str;
+		for (i = needle_len / sizeof(uint32_t); i; i--){ /* One more decrease operate, to avoid branch. */
+			if (*i32ch_p ^ *i32str_p) goto longcut;
+			i32ch_p++;
+			i32str_p++;
+		}
+		cch_p = (const char*)i32ch_p;
+		cstr_p = (const char*)i32str_p;
+		for (i = needle_len & (sizeof(uint32_t)-1); i; i--){
+			if (*cch_p ^ *cstr_p) goto longcut;
+			cch_p++;
+			cstr_p++;
+		}
+
+		return (char*)_str;
+	}else if (needle_len > 1){
+	    const uint32_t nl_mask = ~((uint32_t)(-1L) << ((needle_len - 1) * CHAR_BIT));
+		i32reg = *(const uint32_t*)(_ch + 1); /* Dirty but fast loading. */
+		do{
+			_str = strchr(_str + 1, *_ch); /* Cut _str's head off. */
+			if (!_str) return (char*)_str;
+			i32str_p = (const uint32_t*)(_str + 1);
+		} while ((i32reg ^ *i32str_p) & nl_mask);
+
+		return (char*)_str;
+	}else{
+		/* If _ch size equal to 1 */
+		return strchr(_str + 1, *_ch);
+	}
 }
 
 void* memset(void* _dst, int _val, size_t _size)
@@ -111,9 +305,8 @@ void* memset(void* _dst, int _val, size_t _size)
 	return _dst;
 }
 
-size_t strlen(const char* str)
+unsigned int strlen(const char* str)
 {
-
 	const uint32_t* lp = (const uint32_t*)str; /* Unrolling by 4. */
 
 	const char* cp;

@@ -11,7 +11,7 @@
 
 #include "include\stddef.h"
 #include "include\stdint.h"
-
+#include "include\limits.h"
 #include "include\string.h"
 
 #endif /* Guard word. */

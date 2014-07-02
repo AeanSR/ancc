@@ -13,10 +13,19 @@
 #define __ANCC_RESTRICT /* restrict is not implemented. */
 #endif
 
-void *memcpy(void * __ANCC_RESTRICT s1, const void * __ANCC_RESTRICT s2, size_t n);
-void *memmove(void *s1, const void *s2, size_t n);
+void* memcpy(void * __ANCC_RESTRICT s1, const void * __ANCC_RESTRICT s2, size_t n);
+void* memmove(void *s1, const void *s2, size_t n);
 char* strcpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src);
+char* strncpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src, size_t n);
+char* strcat(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src);
+char* strncat(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src, size_t n);
+int memcmp(const void *s1, const void *s2, size_t n);
+int strcmp(const char *s1, const char *s2);
+int strncmp(const char *s1, const char *s2, size_t n);
+void* memchr(const void* ptr, int _ch, size_t n);
+char* strchr(const char* _str, int _ch);
+char* strstr(const char* _str, const char* _ch);
 void* memset(void* _dst, int _val, size_t _size);
-size_t strlen(const char* str);
+unsigned int strlen(const char* str);
 
 #endif /* Guard word. */
