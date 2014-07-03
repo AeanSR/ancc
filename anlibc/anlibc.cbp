@@ -14,8 +14,8 @@
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
+					<Add option="/NODEFAULTLIB" />
+					<Add option="/Oi-" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -42,8 +42,16 @@
 		<Unit filename="include\stdarg.h" />
 		<Unit filename="include\stddef.h" />
 		<Unit filename="include\stdint.h" />
+		<Unit filename="include\stdio.h" />
+		<Unit filename="include\stdlib.h" />
 		<Unit filename="include\string.h" />
+		<Unit filename="io.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="malloc.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="string.c">
