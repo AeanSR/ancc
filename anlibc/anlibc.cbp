@@ -16,6 +16,7 @@
 				<Compiler>
 					<Add option="/NODEFAULTLIB" />
 					<Add option="/Oi-" />
+					<Add option="/GS-" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -30,6 +31,7 @@
 					<Add option="/O2" />
 					<Add option="/NODEFAULTLIB" />
 					<Add option="/Oi-" />
+					<Add option="/GS-" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

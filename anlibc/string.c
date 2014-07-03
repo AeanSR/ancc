@@ -72,18 +72,24 @@ char* strcpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src)
 		*lp++ = *sp++;
 	}
 
-	if (*lp & 0x7f000000UL){     /* If not divisible by 4; */
-		cp = (char*)lp;
-		csp = (const char*)sp;  /* Copy redundant bytes one by one. */
-		while ((*cp++ = *csp++));
-	}
+    cp = (char*)lp;
+    csp = (const char*)sp;  /* Copy redundant bytes one by one. */
+    while ((*cp++ = *csp++));
+
 	return dst;
 }
 
 char* strncpy(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src, size_t n)
 {
-    size_t l = strlen(src);
-	return memcpy(dst, src, n > l ? n : l);
+        char *start = dst;
+
+        while (n-- && (*dst++ = *src++));    /* copy string */
+
+        if (n)                              /* pad out with zeroes */
+            while (--n)
+                *dst++ = '\0';
+
+        return(start);
 }
 
 char* strcat(char* __ANCC_RESTRICT dst, const char* __ANCC_RESTRICT src)

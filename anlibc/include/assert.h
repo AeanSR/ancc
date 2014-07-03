@@ -9,8 +9,8 @@
 #ifndef __ANLIIBC_ASSERT_INCLUDED_
 #define __ANLIIBC_ASSERT_INCLUDED_
 
-#ifndef __ANLIBC_STDLIB_INCLUDED_
-#include "stdlib.h"
+#ifndef __ANLIBC_INTLBUILD__
+#include <stdio.h>
 #endif
 
 #ifdef NDEBUG

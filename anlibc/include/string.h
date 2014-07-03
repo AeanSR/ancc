@@ -9,6 +9,10 @@
 #ifndef __ANLIBC_STRING_INCLUDED_
 #define __ANLIBC_STRING_INCLUDED_
 
+#ifndef __ANLIBC_INTLBUILD__
+#include <stddef.h>
+#endif
+
 #ifndef __ANCC_RESTRICT
 #define __ANCC_RESTRICT /* restrict is not implemented. */
 #endif

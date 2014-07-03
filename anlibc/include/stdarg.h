@@ -9,9 +9,9 @@
 #ifndef __ANLIBC_STDARG_INCLUDED_
 #define __ANLIBC_STDARG_INCLUDED_
 
-typedef (void*) va_list;
-#define va_start(vl, arg) if(1){ vl = (va_list)( &(arg) ) + ( (sizeof(arg) + sizeof(int) - 1) & ~(sizeof(int) - 1) ) }else
-#define va_end(vl) if(1){ vl = (va_list)0 }else
-#define va_arg(vl, type) ( *(type *)((vl += ( (sizeof(type) + sizeof(int) - 1) & ~(sizeof(int) - 1) )) - ( (sizeof(type) + sizeof(int) - 1) & ~(sizeof(int) - 1) )) )
+typedef char* va_list;
+#define va_start(vl, arg) if(1){ vl = (va_list)( &(arg) ) + ( (sizeof(arg) + sizeof(int) - 1) & ~(sizeof(int) - 1) ); }else
+#define va_end(vl) if(1){ vl = (va_list)0; }else
+#define va_arg(vl, type) ( *((type *)((vl += ( (sizeof(type) + sizeof(int) - 1) & ~(sizeof(int) - 1) )) - ( (sizeof(type) + sizeof(int) - 1) & ~(sizeof(int) - 1) ))) )
 
 #endif /* Guard word. */

@@ -9,6 +9,10 @@
 #ifndef __ANLIBC_STDLIB_INCLUDED_
 #define __ANLIBC_STDLIB_INCLUDED_
 
+#ifndef __ANLIBC_INTLBUILD__
+#include <stddef.h>
+#endif
+
 void* malloc(size_t size);
 void free(void* p);
 void* calloc(size_t c, size_t s);

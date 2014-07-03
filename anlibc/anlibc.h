@@ -9,8 +9,11 @@
 #ifndef __ANLIBC_HEADER_INCLUDED_
 #define __ANLIBC_HEADER_INCLUDED_
 
+#define __ANLIBC_INTLBUILD__
+
 #include "include\stddef.h"
 #include "include\stdint.h"
+#include "include\stdarg.h"
 #include "include\limits.h"
 #include "include\string.h"
 #include "include\stdlib.h"
@@ -20,7 +23,7 @@
 //int __stdcall VirtualFree(void* addr, unsigned size, unsigned ftype);
 void* __stdcall GetStdHandle(unsigned nStdHandle);
 int __stdcall ReadFile(void* hFile, void* lpBuffer, unsigned nNumberOfBytesToRead, unsigned* lpNumberOfBytesRead, void* lpOverlapped);
-int __stdcall WriteFile(void* hFile, void* lpBuffer, unsigned nNumberOfBytesToWrite, unsigned* lpNumberOfBytesWritten, void* lpOverlapped);
+int __stdcall WriteFile(void* hFile, const void* lpBuffer, unsigned nNumberOfBytesToWrite, unsigned* lpNumberOfBytesWritten, void* lpOverlapped);
 void* __stdcall CreateFile(const char* lpFileName, unsigned dwDesiredAccess, unsigned dwShareMode, void* lpSecurityAttributes, unsigned dwCreationDisposition, unsigned dwFlagsAndAttributes, void* hTemplateFile);
 int __stdcall CloseHandle(void* hObject);
 int __stdcall FlushFileBuffers(void* hFile);
