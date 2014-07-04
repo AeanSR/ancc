@@ -31,5 +31,17 @@ int fputs(const char * __ANCC_RESTRICT s, FILE * __ANCC_RESTRICT stream);
 int puts(const char * s);
 size_t fwrite(const void * __ANCC_RESTRICT ptr, size_t size, size_t nmemb, FILE * __ANCC_RESTRICT stream);
 int vsnprintf(char * __ANCC_RESTRICT s, size_t n, const char * __ANCC_RESTRICT format, va_list arg);
+int snprintf(char * __ANCC_RESTRICT s, size_t n, const char * __ANCC_RESTRICT format, ...);
+int vsprintf(char * __ANCC_RESTRICT s, const char * __ANCC_RESTRICT format, va_list arg);
+int sprintf(char * __ANCC_RESTRICT s, const char * __ANCC_RESTRICT format, ...);
+int vfnprintf(FILE * __ANCC_RESTRICT f, size_t n, const char * __ANCC_RESTRICT format, va_list arg);
+int fnprintf(FILE * __ANCC_RESTRICT f, size_t n, const char * __ANCC_RESTRICT format, ...);
+int vfprintf(FILE * __ANCC_RESTRICT f, const char * __ANCC_RESTRICT format, va_list arg);
+int fprintf(FILE * __ANCC_RESTRICT f, const char * __ANCC_RESTRICT format, ...);
+int printf(const char * format, ...);
+
+int fclose(FILE *stream);
+int fflush(FILE *stream);
+FILE *fopen(const char * __ANCC_RESTRICT filename, const char * __ANCC_RESTRICT mode);
 
 #endif /* Guard word. */

@@ -24,7 +24,7 @@
 void* __stdcall GetStdHandle(unsigned nStdHandle);
 int __stdcall ReadFile(void* hFile, void* lpBuffer, unsigned nNumberOfBytesToRead, unsigned* lpNumberOfBytesRead, void* lpOverlapped);
 int __stdcall WriteFile(void* hFile, const void* lpBuffer, unsigned nNumberOfBytesToWrite, unsigned* lpNumberOfBytesWritten, void* lpOverlapped);
-void* __stdcall CreateFile(const char* lpFileName, unsigned dwDesiredAccess, unsigned dwShareMode, void* lpSecurityAttributes, unsigned dwCreationDisposition, unsigned dwFlagsAndAttributes, void* hTemplateFile);
+void* __stdcall CreateFileA(const char* lpFileName, unsigned dwDesiredAccess, unsigned dwShareMode, void* lpSecurityAttributes, unsigned dwCreationDisposition, unsigned dwFlagsAndAttributes, void* hTemplateFile);
 int __stdcall CloseHandle(void* hObject);
 int __stdcall FlushFileBuffers(void* hFile);
 void* __stdcall HeapAlloc(void* hHeap, unsigned dwFlags, unsigned dwBytes);
