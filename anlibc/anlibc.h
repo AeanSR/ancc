@@ -31,6 +31,6 @@ void* __stdcall HeapAlloc(void* hHeap, unsigned dwFlags, unsigned dwBytes);
 int __stdcall HeapFree(void* hHeap, unsigned dwFlags, void* lpMem);
 void* __stdcall HeapReAlloc(void* hHeap, unsigned dwFlags, void* lpMem, unsigned dwBytes);
 void* __stdcall GetProcessHeap(void);
-
+unsigned __stdcall SetFilePointer(void* hFile, long lDistanceToMove, long* lpDistanceToMoveHigh, unsigned dwMoveMethod);
 
 #endif /* Guard word. */

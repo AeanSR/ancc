@@ -24,11 +24,23 @@ FILE* __anlib_getstream(unsigned no);
 #define stdout __anlib_getstream(-11)
 #define stderr __anlib_getstream(-12)
 
+#define EOF (-1)
+#define SEEK_CUR (1)
+#define SEEK_END (2)
+#define SEEK_SET (0)
+
 int fputc(int c, FILE *stream);
+int fgetc(FILE *stream);
 int fputs(const char * __ANCC_RESTRICT s, FILE * __ANCC_RESTRICT stream);
+char* fgets(char * __ANCC_RESTRICT s, int n, FILE * __ANCC_RESTRICT stream);
 #define putc(c, stream) fputc(c, stream)
 #define putchar(c) fputc(c, stdout)
+#define getc(stream) fgetc(stream)
+#define getchar(c) fgetc(stdin)
+
 int puts(const char * s);
+char* gets(char* s);
+
 size_t fwrite(const void * __ANCC_RESTRICT ptr, size_t size, size_t nmemb, FILE * __ANCC_RESTRICT stream);
 int vsnprintf(char * __ANCC_RESTRICT s, size_t n, const char * __ANCC_RESTRICT format, va_list arg);
 int snprintf(char * __ANCC_RESTRICT s, size_t n, const char * __ANCC_RESTRICT format, ...);
@@ -43,5 +55,10 @@ int printf(const char * format, ...);
 int fclose(FILE *stream);
 int fflush(FILE *stream);
 FILE *fopen(const char * __ANCC_RESTRICT filename, const char * __ANCC_RESTRICT mode);
+
+int fseek(FILE *stream, long int offset, int whence);
+long int ftell(FILE *stream);
+void rewind(FILE *stream);
+int feof(FILE *stream);
 
 #endif /* Guard word. */

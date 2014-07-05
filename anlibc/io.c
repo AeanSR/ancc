@@ -19,15 +19,50 @@ int fputc(int c, FILE *stream){
     else
         return -1;
 }
+int fgetc(FILE *stream){
+    unsigned nbyte = 0;
+    unsigned char c;
+    if( ReadFile(stream, &c, 1, &nbyte, 0) )
+        return nbyte == 1 ? c : -1;
+    else
+        return -1;
+}
 int fputs(const char * __ANCC_RESTRICT s, FILE * __ANCC_RESTRICT stream){
     while(*s)
         fputc(*s++, stream);
     return 1;
 }
+char* fgets(char * __ANCC_RESTRICT s, int n, FILE * __ANCC_RESTRICT stream){
+    char c;
+    char* head = s;
+    while(--n){
+        c = fgetc(stream);
+        if (c == -1) break;
+        *s++ = c;
+        if (c == '\n') break;
+    }
+    if (c == -1 && s == head) return 0;
+    *s = 0;
+    return head;
+}
+
 int puts(const char * s){
     while(*s)
         fputc(*s++, stdout);
     return fputc('\n', stdout);
+}
+char* gets(char* s){
+    char c;
+    char* head = s;
+    while(1){
+        c = fgetc(stdin);
+        if (c == -1) break;
+        if (c == '\n') break;
+        *s++ = c;
+    }
+    if (c == -1 && s == head) return 0;
+    *s = 0;
+    return head;
 }
 size_t fwrite(const void * __ANCC_RESTRICT ptr, size_t size, size_t nmemb, FILE * __ANCC_RESTRICT stream){
     size *= nmemb;
@@ -281,5 +316,24 @@ FILE *fopen(const char * __ANCC_RESTRICT filename, const char * __ANCC_RESTRICT 
     }else if(0==strcmp(mode, "a+") || 0==strcmp(mode, "ab+") || 0==strcmp(mode, "a+b")){
         return CreateFileA(filename, 4, 1, 0, 4, 0x80, 0);
     }
+    return 0;
+}
+int fseek(FILE *stream, long int offset, int whence){
+    if (-1 != SetFilePointer(stream, offset, 0, whence))
+        return 0;
+    return -1;
+}
+long int ftell(FILE *stream){
+    return SetFilePointer(stream, 0, 0, SEEK_CUR);
+}
+void rewind(FILE *stream){
+    SetFilePointer(stream, 0, 0, SEEK_SET);
+}
+int feof(FILE *stream){
+    unsigned char c;
+    unsigned nbyte = 0;
+    ReadFile(stream, &c, 1, &nbyte, 0);
+    if (nbyte == 0) return -1;
+    SetFilePointer(stream, -1, 0, SEEK_CUR);
     return 0;
 }

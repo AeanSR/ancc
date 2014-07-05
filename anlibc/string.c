@@ -324,3 +324,10 @@ unsigned int strlen(const char* str)
 	return (cp - str);
 }
 
+char* strdup(char* s){
+    char* newbase = 0;
+    newbase = calloc(strlen(s) + 1, 1);
+    if (newbase)
+        strcpy(newbase, s);
+    return newbase;
+}

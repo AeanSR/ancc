@@ -31,5 +31,7 @@ char* strchr(const char* _str, int _ch);
 char* strstr(const char* _str, const char* _ch);
 void* memset(void* _dst, int _val, size_t _size);
 unsigned int strlen(const char* str);
+char* strdup(char* s);
+#define _strdup(s) strdup(s)
 
 #endif /* Guard word. */
