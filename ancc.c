@@ -11,14 +11,12 @@
 
 int main(){
     token_t t;
-    char* anlex = strpool("anlex.c");
     push_file("anlex.c");
     preprocess();
     read_source();
     do{
         t = lexparse();
         if (t.no==NAL) break;
-        if(t.cur->fname!=anlex)
         printf("%s %d \"%s\"\n", t.val, t.cur->lno, t.cur->fname);
     }while(1);
 /*    read_source();
