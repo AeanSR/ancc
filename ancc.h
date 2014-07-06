@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <stdarg.h>
 
 /*
@@ -61,6 +60,8 @@ extern char* memory;
 extern keyword_t keylist[];
 extern char* source;
 extern sourceline_t* cur;
+extern int error_occured;
+extern int warning_occured;
 
 int is_digit(char c);
 int is_octaldigit(char c);
@@ -72,7 +73,6 @@ int is_alphabet(char c);
 
 void badalloc();
 void read_source();
-char* read_line(FILE* f);
 char _gc(int fwd);
 char _lagc(size_t k);
 char _gf(size_t k);
@@ -88,7 +88,12 @@ void pop_file();
 void mwrite(char s);
 void mclear();
 char* strpool(const char* str __ANCC_BY_VAL);
-void eprintf(const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ...);
+
+void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... );
+void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... );
+void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), va_list vl );
+
+char* vc_dir_path();
 
 enum{
     IDENT,
@@ -114,14 +119,7 @@ enum{
     NAL,
 };
 
-typedef struct macro_t{
-    char* macro_name;
-    int argc;
-    int variadic_arg;
-    char* replacement;
-    struct macro_t* next;
-} macro_t;
-
+void preprocess();
 token_t lexparse();
 
 #endif /* Guard word. */

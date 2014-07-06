@@ -18,4 +18,8 @@ void free(void* p);
 void* calloc(size_t c, size_t s);
 void* realloc(void *ptr, size_t size);
 
+#define RAND_MAX 32767
+int rand(void);
+void srand(unsigned int seed);
+
 #endif /* Guard word. */

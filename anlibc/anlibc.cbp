@@ -14,9 +14,10 @@
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="/NODEFAULTLIB" />
 					<Add option="/Oi-" />
 					<Add option="/GS-" />
+					<Add option="/Zl" />
+					<Add option="/FA" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -29,9 +30,10 @@
 				<Compiler>
 					<Add option="/arch:SSE" />
 					<Add option="/O2" />
-					<Add option="/NODEFAULTLIB" />
 					<Add option="/Oi-" />
 					<Add option="/GS-" />
+					<Add option="/Zl" />
+					<Add option="/FA" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -54,6 +56,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="malloc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rand.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="string.c">

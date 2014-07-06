@@ -15,14 +15,18 @@
 #endif
 
 #ifndef __ANCC_RESTRICT
-#define __ANCC_RESTRICT /* restrict is not implemented. */
+#ifdef __ANCC__
+#define __ANCC_RESTRICT restrict
+#else
+#define __ANCC_RESTRICT __restrict
+#endif
 #endif
 
 typedef unsigned FILE;
-FILE* __anlib_getstream(unsigned no);
-#define stdin  __anlib_getstream(-10)
-#define stdout __anlib_getstream(-11)
-#define stderr __anlib_getstream(-12)
+FILE* __anlibc_getstream(unsigned no);
+#define stdin  __anlibc_getstream(-10)
+#define stdout __anlibc_getstream(-11)
+#define stderr __anlibc_getstream(-12)
 
 #define EOF (-1)
 #define SEEK_CUR (1)

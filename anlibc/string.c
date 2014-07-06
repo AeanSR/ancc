@@ -331,3 +331,11 @@ char* strdup(char* s){
         strcpy(newbase, s);
     return newbase;
 }
+
+char* _strdup(char* s){
+    char* newbase = 0;
+    newbase = calloc(strlen(s) + 1, 1);
+    if (newbase)
+        strcpy(newbase, s);
+    return newbase;
+}

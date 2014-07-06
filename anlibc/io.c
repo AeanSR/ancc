@@ -8,7 +8,7 @@
 
 #include "anlibc.h"
 
-FILE* __anlib_getstream(unsigned no){
+FILE* __anlibc_getstream(unsigned no){
     return GetStdHandle(no);
 }
 
@@ -71,7 +71,7 @@ size_t fwrite(const void * __ANCC_RESTRICT ptr, size_t size, size_t nmemb, FILE 
     return nmemb;
 }
 
-char d2c(int ch, int lcase){
+char __anlibc_d2c(int ch, int lcase){
     if (ch >= 0 && ch <= 9)
         return ch + '0';
     if (ch >= 10 && ch <= 16)
@@ -88,7 +88,7 @@ char d2c(int ch, int lcase){
         *s++ = '0'; \
     } \
     while(ch){ \
-        buf[i++] = d2c(ch % pargradix, pargcase); \
+        buf[i++] = __anlibc_d2c(ch % pargradix, pargcase); \
         ch /= pargradix ; \
     } \
     while(i < minlen) \
@@ -98,19 +98,19 @@ char d2c(int ch, int lcase){
     } \
     *s = 0; return (s-head);}else
 
-int _printd(char* s, long int ch, int minlen, int leadzero){
+int __anlibc_printd(char* s, long int ch, int minlen, int leadzero){
     __PRINTD_BODY(1, 10, 1);
 }
-int _printu(char* s, unsigned long ch, int minlen, int leadzero){
+int __anlibc_printu(char* s, unsigned long ch, int minlen, int leadzero){
     __PRINTD_BODY(0, 10, 1);
 }
-int _printx(char* s, unsigned long ch, int minlen, int leadzero){
+int __anlibc_printx(char* s, unsigned long ch, int minlen, int leadzero){
     __PRINTD_BODY(0, 16, 1);
 }
-int _printX(char* s, unsigned long ch, int minlen, int leadzero){
+int __anlibc_printX(char* s, unsigned long ch, int minlen, int leadzero){
     __PRINTD_BODY(0, 16, 0);
 }
-int _printo(char* s, unsigned long ch, int minlen, int leadzero){
+int __anlibc_printo(char* s, unsigned long ch, int minlen, int leadzero){
     __PRINTD_BODY(0, 8, 1);
 }
 
@@ -120,14 +120,13 @@ int _printo(char* s, unsigned long ch, int minlen, int leadzero){
                 printfunc(buf, va_arg(arg, pargtype), minlen, leadzero); \
                 while(*p && count > 0){ if(select) *s++ = *p++; else fputc(*p++, f); count--; } \
                 state = 0; leadzero = 0; minlen = 0;}else
-#define PD(pargn, pargtype) P(pargn, pargtype, _printd)
-#define PU(pargn, pargtype) P(pargn, pargtype, _printu)
-#define Px(pargn, pargtype) P(pargn, pargtype, _printx)
-#define PX(pargn, pargtype) P(pargn, pargtype, _printX)
-#define PO(pargn, pargtype) P(pargn, pargtype, _printo)
+#define PD(pargn, pargtype) P(pargn, pargtype, __anlibc_printd)
+#define PU(pargn, pargtype) P(pargn, pargtype, __anlibc_printu)
+#define Px(pargn, pargtype) P(pargn, pargtype, __anlibc_printx)
+#define PX(pargn, pargtype) P(pargn, pargtype, __anlibc_printX)
+#define PO(pargn, pargtype) P(pargn, pargtype, __anlibc_printo)
 
-
-int coreprintf(char * __ANCC_RESTRICT s, FILE* f, int select, size_t n, const char * __ANCC_RESTRICT format, va_list arg){
+int __anlibc_coreprintf(char * __ANCC_RESTRICT s, FILE* f, int select, size_t n, const char * __ANCC_RESTRICT format, va_list arg){
     int state = 0;
     int count = n;
     char buf[128] = {0};
@@ -244,46 +243,46 @@ int coreprintf(char * __ANCC_RESTRICT s, FILE* f, int select, size_t n, const ch
 }
 
 int vsnprintf(char * __ANCC_RESTRICT s, size_t n, const char * __ANCC_RESTRICT format, va_list arg){
-    return coreprintf(s, 0, 1, n, format, arg);
+    return __anlibc_coreprintf(s, 0, 1, n, format, arg);
 }
 int snprintf(char * __ANCC_RESTRICT s, size_t n, const char * __ANCC_RESTRICT format, ...){
     va_list arg;
     int ret;
     va_start(arg, format);
-    ret = coreprintf(s, 0, 1, n, format, arg);
+    ret = __anlibc_coreprintf(s, 0, 1, n, format, arg);
     va_end(arg);
     return ret;
 }
 int vsprintf(char * __ANCC_RESTRICT s, const char * __ANCC_RESTRICT format, va_list arg){
-    return coreprintf(s, 0, 1, 0x7FFFFFFFUL, format, arg);
+    return __anlibc_coreprintf(s, 0, 1, 0x7FFFFFFFUL, format, arg);
 }
 int sprintf(char * __ANCC_RESTRICT s, const char * __ANCC_RESTRICT format, ...){
     va_list arg;
     int ret;
     va_start(arg, format);
-    ret = coreprintf(s, 0, 1, 0x7FFFFFFFUL, format, arg);
+    ret = __anlibc_coreprintf(s, 0, 1, 0x7FFFFFFFUL, format, arg);
     va_end(arg);
     return ret;
 }
 int vfnprintf(FILE * __ANCC_RESTRICT f, size_t n, const char * __ANCC_RESTRICT format, va_list arg){
-    return coreprintf(0, f, 0, n, format, arg);
+    return __anlibc_coreprintf(0, f, 0, n, format, arg);
 }
 int fnprintf(FILE * __ANCC_RESTRICT f, size_t n, const char * __ANCC_RESTRICT format, ...){
     va_list arg;
     int ret;
     va_start(arg, format);
-    ret = coreprintf(0, f, 0, n, format, arg);
+    ret = __anlibc_coreprintf(0, f, 0, n, format, arg);
     va_end(arg);
     return ret;
 }
 int vfprintf(FILE * __ANCC_RESTRICT f, const char * __ANCC_RESTRICT format, va_list arg){
-    return coreprintf(0, f, 0, 0x7FFFFFFFUL, format, arg);
+    return __anlibc_coreprintf(0, f, 0, 0x7FFFFFFFUL, format, arg);
 }
 int fprintf(FILE * __ANCC_RESTRICT f, const char * __ANCC_RESTRICT format, ...){
     va_list arg;
     int ret;
     va_start(arg, format);
-    ret = coreprintf(0, f, 0, 0x7FFFFFFFUL, format, arg);
+    ret = __anlibc_coreprintf(0, f, 0, 0x7FFFFFFFUL, format, arg);
     va_end(arg);
     return ret;
 }
@@ -291,7 +290,7 @@ int printf(const char * format, ...){
     va_list arg;
     int ret;
     va_start(arg, format);
-    ret = coreprintf(0, stdout, 0, 0x7FFFFFFFUL, format, arg);
+    ret = __anlibc_coreprintf(0, stdout, 0, 0x7FFFFFFFUL, format, arg);
     va_end(arg);
     return ret;
 }

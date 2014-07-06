@@ -15,23 +15,6 @@ void badalloc() {
 char* source = 0;
 sourceline_t* cur = 0;
 sourceline_t* intl_s = 0;
-void read_source() {
-    int l = 1;
-    sourceline_t* p = 0;
-    while( !feof( file_pointer() ) ) {
-        cur = calloc( 1, sizeof( sourceline_t ) );
-        if ( !cur ) badalloc();
-        if ( !intl_s ) intl_s = cur;
-        cur->next = 0;
-        cur->lno = l++;
-        cur->fname = file_name();
-        cur->source = read_line( file_pointer() );
-        if ( p ) p->next = cur;
-        p = cur;
-    }
-    cur = intl_s;
-    source = cur->source;
-}
 
 typedef struct linkstring_t {
     char d;
@@ -42,7 +25,9 @@ char* read_line( FILE* f ) {
     linkstring_t first;
     linkstring_t* head = &first, *p, *q;
     char c;
+    char buf[256] = {0};
     char* out, *outh;
+    int ret;
     size_t len = 0;
     if ( !( len += fread( &c, 1, 1, f ) ) )
         return strpool( "" );
@@ -51,6 +36,35 @@ char* read_line( FILE* f ) {
             return strpool( "" );
     if ( c == '\n' )
         return strpool( "" );
+    if ( c == '#' ){
+        int state = 0;
+        ret = fscanf( f, "line %d", &cur->lno);
+        if (ret != 1)
+            return strpool( "" );
+        cur->lno--;
+        len = 0;
+        while((c=fgetc(f))!='\n'){
+            switch(state){
+            case 0:
+                if(c=='"') state = 1;
+                break;
+            case 1:
+                if(c=='\\') state = 2;
+                else if(c=='"') state = 3;
+                else buf[len++] = c;
+                break;
+            case 2:
+                buf[len++] = c;
+                state = 1;
+                break;
+            case 3:
+            default:
+                break;
+            }
+        }
+        if (state == 3) cur->fname = strpool(buf);
+        return strpool("");
+    }
 
     first.d = c;
     first.next = 0;
@@ -78,6 +92,24 @@ char* read_line( FILE* f ) {
     }
     return outh;
 }
+
+void read_source() {
+    sourceline_t* p = 0;
+    while( !feof( file_pointer() ) ) {
+        cur = calloc( 1, sizeof( sourceline_t ) );
+        if ( !cur ) badalloc();
+        if ( !intl_s ) intl_s = cur;
+        cur->next = 0;
+        cur->lno = p ? p->lno + 1 : 1;
+        cur->fname = p ? p->fname : file_name();
+        cur->source = read_line( file_pointer() );
+        if ( p ) p->next = cur;
+        p = cur;
+    }
+    cur = intl_s;
+    source = cur->source;
+}
+
 char _gc( int fwd ) {
     char ch = 0;
     if ( !intl_s ) read_source();
@@ -133,8 +165,6 @@ void push_file( const char* filename __ANCC_BY_VAL ) {
     sourcefile_t* newfile = calloc( sizeof( sourcefile_t ), 1 );
     if ( !newfile ) badalloc();
     newfile->fname = _strdup( filename );
-    newfile->fp = fopen( newfile->fname, "rb" );
-    /** To do: exception for file open. */
     newfile->next = 0;
     newfile->prev = workingfile;
     if ( !intl_f ) intl_f = newfile;
@@ -205,22 +235,40 @@ char* strpool( const char* str __ANCC_BY_VAL ) {
 }
 
 /* == Error report. =============================== */
-void eprintf( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... ) {
+int error_occured = 0;
+int warning_occured = 0;
+void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... ){
+    va_list vl;
+    va_start(vl, message);
+    eprintf(1, message, vl);
+    va_end(vl);
+    error_occured++;
+}
+void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... ){
+    va_list vl;
+    va_start(vl, message);
+    eprintf(0, message, vl);
+    va_end(vl);
+    warning_occured++;
+}
+void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), va_list vl ) {
     char* p;
     char buffer[256] = {0};
-    va_list vl;
 
     /*
         Use the same error output format from GCC:
-            :<line>:<offset>: <message>
+            <filename>:<line>:<offset>: <message>
             < a single line of source code >
                              ^   <-- a mark pointing to where error occurred.
     */
 
-    va_start( vl, message );
     vsnprintf( buffer, 256, message, vl );
-    va_end( vl );
-    printf( "\n:%d:%u: %s\n", cur->lno, 1U + ( unsigned )( ( uintptr_t )source - ( uintptr_t )cur->source ), buffer );
+    printf( "\n%s:%d:%u: %s: %s\n",
+            cur->fname,
+            cur->lno,
+            1U + ( unsigned )( ( uintptr_t )source - ( uintptr_t )cur->source ),
+            type ? "error" : "warning" ,
+            buffer );
 
     printf( "%s\n", cur->source );
 
@@ -264,4 +312,27 @@ int is_lowercase( char c ) {
 }
 int is_alphabet( char c ) {
     return is_uppercase( c ) || is_lowercase( c );
+}
+
+char* vc_dir_path(){
+    char* dir = 0;
+    static char* out = 0;
+    if (out) return out;
+    out = calloc(512, 1);
+    if (!out) badalloc();
+    if (NULL == (dir = getenv("VS120COMNTOOLS")))
+    if (NULL == (dir = getenv("VS110COMNTOOLS")))
+    if (NULL == (dir = getenv("VS100COMNTOOLS")))
+    if (NULL == (dir = getenv("VS90COMNTOOLS")))
+    if (NULL == (dir = getenv("VS80COMNTOOLS")))
+    if (NULL == (dir = getenv("VS71COMNTOOLS"))){
+        printf("internal error: cannot find MSVC path. please setup env vars first.\n");
+        exit(-1);
+    }
+    if (strlen(dir) > 490){
+        printf("internal error: MSVC path too long.");
+        exit(-1);
+    }
+    sprintf(out, "%s\\..\\..\\VC\\bin\\", dir);
+    return out;
 }

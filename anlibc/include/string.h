@@ -14,7 +14,11 @@
 #endif
 
 #ifndef __ANCC_RESTRICT
-#define __ANCC_RESTRICT /* restrict is not implemented. */
+#ifdef __ANCC__
+#define __ANCC_RESTRICT restrict
+#else
+#define __ANCC_RESTRICT __restrict
+#endif
 #endif
 
 void* memcpy(void * __ANCC_RESTRICT s1, const void * __ANCC_RESTRICT s2, size_t n);
@@ -32,6 +36,6 @@ char* strstr(const char* _str, const char* _ch);
 void* memset(void* _dst, int _val, size_t _size);
 unsigned int strlen(const char* str);
 char* strdup(char* s);
-#define _strdup(s) strdup(s)
+char* _strdup(char* s);
 
 #endif /* Guard word. */

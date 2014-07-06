@@ -105,7 +105,7 @@ token_t lexparse() {
                     head = source;
                     hcur = cur;
                 } else if( CLA() ) {
-                    eprintf( "error: unexpected token '%c'(0x%02X)", CLA(), ( unsigned )CLA() );
+                    err( "unexpected token '%c'(0x%02X)", CLA(), ( unsigned )CLA() );
                     CGF();
                 }
                 break;
@@ -213,7 +213,7 @@ token_t lexparse() {
                     CGF();
                     mwrite( '\\' );
                 } else if( CLA() == '\n' ) {
-                    eprintf( "error: missing terminating \" character" );
+                    err( "missing terminating \" character" );
                     CGF();
                     state = S_BREAK;
                     return token( C_STRING, head, hcur, strpool( memory ) );
@@ -240,7 +240,7 @@ token_t lexparse() {
                         mwrite( CGF() );
                     state = S_STRING;
                 } else if( CLA() ) {
-                    eprintf( "warning: unknown escape sequence: \'\\%c\'", CLA() );
+                    warn( "unknown escape sequence: \'\\%c\'", CLA() );
                     mwrite( CGF() );
                     state = S_STRING;
                 }
@@ -248,9 +248,9 @@ token_t lexparse() {
             case S_CHAR:
                 if( CLA() == '\'' ) {
                     if ( strlen( memory ) > 2 || ( strlen( memory ) > 1 && *memory != '\\' ) )
-                        eprintf( "warning: multi-character character constant \"%s\"", memory );
+                        warn( "multi-character character constant \"%s\"", memory );
                     else if( *memory == 0 )
-                        eprintf( "error: empty character constant" );
+                        err( "empty character constant" );
                     state = S_BREAK;
                     CGF();
                     return token( C_CHAR, head, hcur, strpool( memory ) );
@@ -259,7 +259,7 @@ token_t lexparse() {
                     CGF();
                     mwrite( '\\' );
                 } else if( CLA() == '\n' ) {
-                    eprintf( "error: missing terminating \' character" );
+                    err( "missing terminating \' character" );
                     CGF();
                     state = S_BREAK;
                     return token( C_CHAR, head, hcur, strpool( memory ) );
@@ -286,7 +286,7 @@ token_t lexparse() {
                         mwrite( CGF() );
                     state = S_CHAR;
                 } else if( CLA() ) {
-                    eprintf( "warning: unknown escape sequence: \'\\%c\'", CLA() );
+                    warn( "unknown escape sequence: \'\\%c\'", CLA() );
                     mwrite( CGF() );
                     state = S_CHAR;
                 }
