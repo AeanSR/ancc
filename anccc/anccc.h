@@ -16,6 +16,10 @@ typedef struct symbol_t{
     int no;
     char* name;
 } symbol_t;
+typedef struct rule_t{
+    int left;
+    int r[8];
+} rule_t;
 
 extern symbol_t* symbol_list[];
 extern symbol_t terminal_list[];
@@ -43,6 +47,8 @@ enum{
     PUNC31, PUNC32, PUNC33, PUNC34, PUNC35, PUNC36, PUNC37, PUNC38, PUNC39, PUNC40,
     PUNC41, PUNC42, PUNC43, PUNC44, PUNC45, PUNC46, PUNC47, PUNC48,
     NAL,
+    string_literal,
+    constant,
     primary_expression,
     postfix_expression,
     argument_expression_list,
