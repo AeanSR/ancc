@@ -11,6 +11,7 @@
 #define ANCCC_H_INCLUDED
 
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct symbol_t{
     int no;
@@ -18,7 +19,7 @@ typedef struct symbol_t{
 } symbol_t;
 typedef struct rule_t{
     int left;
-    int r[8];
+    int r[10];
 } rule_t;
 
 extern symbol_t* symbol_list[];
@@ -99,6 +100,7 @@ enum{
     type_name,
     abstract_declarator,
     direct_abstract_declarator,
+    direct_abstract_declarator_final,
     typedef_name,
     initializer,
     initializer_list,
