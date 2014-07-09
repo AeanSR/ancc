@@ -31,6 +31,7 @@ typedef struct item_t{
 typedef struct itemset_t{
     item_t* item;
     unsigned long long zobrist;
+    int zobred;
 } itemset_t;
 
 extern symbol_t* symbol_list[];
@@ -48,6 +49,10 @@ int setdup(itemset_t* s1, itemset_t* s2);
 int itemeq(item_t* t1, item_t* t2);
 itemset_t* conset(item_t* core);
 item_t* conitem(int rule, int p, int la);
+void delset(itemset_t* set);
+
+void derive();
+void printfamily();
 
 #define IST(v) ((v)>=IDENT && (v)<=NAL)
 #define ISNT(v) ((v)>=string_literal && (v)<EOL)

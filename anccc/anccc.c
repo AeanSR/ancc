@@ -40,9 +40,14 @@ void test_first(){
 }
 
 int main(){
-    itemset_t* set = conset(conitem(0, 0, NAL));
-    printset(set);
-    printf("-------------\n");
-    closure(set);
-    printset(set);
+    printf(
+           "anccc: another noobish C compiler's compiler.\n"
+           "Aean, 2014 <v@aean.net>\n"
+           "anccc is part of ancc project, which is licensed under the terms of MIT License."
+           "You should have recieved a copy of the license. If not, please visit            "
+           "<http://mit-license.org/>.\n"
+           );
+    printf("\n");
+    printf("Discovering the Canonical LR(1) item set family.\n");
+    derive();
 }

@@ -24,14 +24,15 @@ void zobrfill(){
     zobrfilled = 1;
 }
 
-void rezobr(itemset_t* set){
+unsigned long long rezobr(itemset_t* set){
     item_t* p = set->item;
+    unsigned long long z = 0;
     if(!zobrfilled) zobrfill();
-    set->zobrist = 0;
     while(p){
-        set->zobrist ^= zobrist_table[p->rule][p->p][p->la];
+        z ^= zobrist_table[p->rule][p->p][p->la];
         p=p->next;
     }
+    return z;
 }
 
 item_t* conitem(int rule, int p, int la){
@@ -45,8 +46,18 @@ item_t* conitem(int rule, int p, int la){
 itemset_t* conset(item_t* core){
     itemset_t* ret = calloc(sizeof(itemset_t), 1);
     ret->item = core;
-    ret->zobrist = 0;
     return ret;
+}
+
+void delset(itemset_t* set){
+    item_t* p = set->item;
+    item_t* q;
+    while(p){
+        q = p;
+        p = p->next;
+        free(q);
+    }
+    free(set);
 }
 
 int itemeq(item_t* t1, item_t* t2){
@@ -54,14 +65,21 @@ int itemeq(item_t* t1, item_t* t2){
 }
 
 int setdup(itemset_t* s1, itemset_t* s2){
-    rezobr(s1);
-    rezobr(s2);
+    if (!s1->zobred){
+        s1->zobrist = rezobr(s1);
+        s1->zobred = 1;
+    }
+    if (!s2->zobred){
+        s2->zobrist = rezobr(s2);
+        s2->zobred = 1;
+    }
     return s1->zobrist == s2->zobrist;
 }
 
 int additem(itemset_t* set, item_t* newitem){
     if (!set->item){
         set->item = newitem;
+        set->zobred = 0;
         return 1;
     }else{
         int flag = 0;
@@ -76,10 +94,12 @@ int additem(itemset_t* set, item_t* newitem){
         if (!flag){
             if (!itemeq(p, newitem)){
                 p->next = newitem;
+                set->zobred = 0;
                 return 1;
             }
         }
     }
+    free(newitem);
     return 0;
 }
 

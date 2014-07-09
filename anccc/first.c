@@ -12,10 +12,10 @@ int* FIRST( int nonterm ) {
     int* ret;
     if( f[nonterm] ) return f[nonterm];
     if( IST( nonterm ) ){
-        ret = calloc(8, 1);
-        ret[0] = nonterm;
-        ret[1] = EOL;
-        return ret;
+        f[nonterm] = calloc(8, 1);
+        f[nonterm][0] = nonterm;
+        f[nonterm][1] = EOL;
+        return f[nonterm];
     }
     int i = 0, j = 0, k = 0, l = 0;
     for( ; rule_list[i].left != EOL; i++ ) {
