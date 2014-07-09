@@ -98,9 +98,7 @@ char* vc_dir_path();
 enum{
     IDENT,
     C_CHAR,     C_STRING,
-    C_SINGLE,   C_DOUBLE,
-    C_SIGNED,   C_UNSIGNED,     C_SIGNEDLONG,   C_UNSIGNEDLONG,
-    C_SIGNEDLONGLONG,           C_UNSIGNEDLONGLONG,
+    C_NUM,
     K_AUTO,     K_BREAK,    K_CASE,     K_CHAR,
     K_CONST,    K_CONTINUE, K_DEFAULT,  K_DO,
     K_DOUBLE,   K_ELSE,     K_ENUM,     K_EXTERN,

@@ -8,8 +8,7 @@
 #define K(v) { v, #v }
 symbol_t* symbol_list[] = {terminal_list, nonterminal_list};
 symbol_t terminal_list[] = {
-    K(IDENT),K(C_CHAR),K(C_STRING),K(C_SINGLE),K(C_DOUBLE),K(C_SIGNED),K(C_UNSIGNED),K(C_SIGNEDLONG),K(C_UNSIGNEDLONG),
-    K(C_SIGNEDLONGLONG),K(C_UNSIGNEDLONGLONG),K(K_AUTO),K(K_BREAK),K(K_CASE),K(K_CHAR),K(K_CONST),K(K_CONTINUE),
+    K(IDENT),K(C_CHAR),K(C_STRING),K(C_NUM),K(K_AUTO),K(K_BREAK),K(K_CASE),K(K_CHAR),K(K_CONST),K(K_CONTINUE),
     K(K_DEFAULT),K(K_DO),K(K_DOUBLE),K(K_ELSE),K(K_ENUM),K(K_EXTERN),K(K_FLOAT),K(K_FOR),K(K_GOTO),K(K_IF),K(K_INLINE),
     K(K_INT),K(K_LONG),K(K_REGISTER),K(K_RESTRICT),K(K_RETURN),K(K_SHORT),K(K_SIGNED),K(K_SIZEOF),K(K_STATIC),K(K_STRUCT),
     K(K_SWITCH),K(K_TYPEDEF),K(K_UNION),K(K_UNSIGNED),K(K_VOID),K(K_VOLATILE),K(K_WHILE),K(K_BOOL),K(K_COMPLEX),
@@ -22,6 +21,7 @@ symbol_t terminal_list[] = {
 };
 symbol_t nonterminal_list[] = {
     K(string_literal),
+    K(constant),
     K(primary_expression),
     K(postfix_expression),
     K(argument_expression_list),
@@ -92,22 +92,17 @@ symbol_t nonterminal_list[] = {
     K(external_declaration),
     K(function_definition),
     K(declaration_list),
+    K(whole_file),
     {EOL, NULL}
 };
 
 #define R(l,...) { l, {__VA_ARGS__, EOL} }
 rule_t rule_list[] = {
+    R(whole_file, translation_unit),
     R(string_literal, C_STRING),
     R(string_literal, string_literal, C_STRING),
     R(constant, IDENT),
-    R(constant, C_SINGLE),
-    R(constant, C_DOUBLE),
-    R(constant, C_SIGNED),
-    R(constant, C_UNSIGNED),
-    R(constant, C_SIGNEDLONG),
-    R(constant, C_UNSIGNEDLONG),
-    R(constant, C_SIGNEDLONGLONG),
-    R(constant, C_UNSIGNEDLONGLONG),
+    R(constant, C_NUM),
     R(constant, C_CHAR),
     R(primary_expression, IDENT),
     R(primary_expression, constant),
@@ -356,4 +351,5 @@ rule_t rule_list[] = {
     R(function_definition, declaration_specifiers, declarator, compound_statement),
     R(declaration_list, declaration),
     R(declaration_list, declaration_list, declaration),
+    R(EOL, EOL),
 };

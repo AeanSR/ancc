@@ -35,6 +35,12 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="anccc.h" />
+		<Unit filename="first.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="item.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="lut.c">
 			<Option compilerVar="CC" />
 		</Unit>

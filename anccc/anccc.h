@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef struct symbol_t{
     int no;
@@ -21,17 +22,40 @@ typedef struct rule_t{
     int left;
     int r[10];
 } rule_t;
+typedef struct item_t{
+    int rule;
+    int p;
+    int la;
+    struct item_t* next;
+} item_t;
+typedef struct itemset_t{
+    item_t* item;
+    unsigned long long zobrist;
+} itemset_t;
 
 extern symbol_t* symbol_list[];
 extern symbol_t terminal_list[];
 extern symbol_t nonterminal_list[];
+extern rule_t rule_list[];
+
+int* FIRST(int nonterm);
+char* nameofsym(int sym);
+void printitem(item_t* item);
+void printset(itemset_t* set);
+void closure(itemset_t* set);
+int additem(itemset_t* set, item_t* newitem);
+int setdup(itemset_t* s1, itemset_t* s2);
+int itemeq(item_t* t1, item_t* t2);
+itemset_t* conset(item_t* core);
+item_t* conitem(int rule, int p, int la);
+
+#define IST(v) ((v)>=IDENT && (v)<=NAL)
+#define ISNT(v) ((v)>=string_literal && (v)<EOL)
 
 enum{
     IDENT,
     C_CHAR,     C_STRING,
-    C_SINGLE,   C_DOUBLE,
-    C_SIGNED,   C_UNSIGNED,     C_SIGNEDLONG,   C_UNSIGNEDLONG,
-    C_SIGNEDLONGLONG,           C_UNSIGNEDLONGLONG,
+    C_NUM,
     K_AUTO,     K_BREAK,    K_CASE,     K_CHAR,
     K_CONST,    K_CONTINUE, K_DEFAULT,  K_DO,
     K_DOUBLE,   K_ELSE,     K_ENUM,     K_EXTERN,
@@ -120,6 +144,7 @@ enum{
     external_declaration,
     function_definition,
     declaration_list,
+    whole_file,
     EOL,
 };
 

@@ -28,12 +28,6 @@ token_t lexparse() {
     size_t lmlen, len;
     char* head;
     sourceline_t* hcur;
-    static const int inttype[3][2] = {
-        { C_SIGNED, C_UNSIGNED },
-        { C_SIGNEDLONG, C_UNSIGNEDLONG },
-        { C_SIGNEDLONGLONG, C_UNSIGNEDLONGLONG },
-    };
-    static const int floattype[] = {C_SINGLE, C_DOUBLE};
 
     mclear();
     head = source;
@@ -125,15 +119,14 @@ token_t lexparse() {
                     CGF();
                     state = S_CONSTFLOAT;
                 } else if( CLA() ) {
-                    int sign = 0, word = 0;
                     if( CLA() == 'U' || CLA() == 'u' )
-                        sign++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     state = S_BREAK;
-                    return token( inttype[word][sign], head, hcur, strpool( memory ) );
+                    return token( C_NUM, head, hcur, strpool( memory ) );
                 }
                 break;
             case S_CONSTNUM_Z:
@@ -149,58 +142,54 @@ token_t lexparse() {
                     CGF();
                     state = S_CONSTHEX;
                 } else if( CLA() ) {
-                    int sign = 0, word = 0;
                     if( CLA() == 'U' || CLA() == 'u' )
-                        sign++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     state = S_BREAK;
-                    return token( inttype[word][sign], head, hcur, strpool( memory ) );
+                    return token( C_NUM, head, hcur, strpool( memory ) );
                 }
                 break;
             case S_CONSTOCTAT:
                 if( is_octaldigit( CLA() ) ) {
                     mwrite( CGF() );
                 } else if( CLA() ) {
-                    int sign = 0, word = 0;
                     if( CLA() == 'U' || CLA() == 'u' )
-                        sign++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     state = S_BREAK;
-                    return token( inttype[word][sign], head, hcur, strpool( memory ) );
+                    return token( C_NUM, head, hcur, strpool( memory ) );
                 }
                 break;
             case S_CONSTFLOAT:
                 if( is_digit( CLA() ) ) {
                     mwrite( CGF() );
                 } else if( CLA() ) {
-                    int word = 0;
                     if( CLA() == 'F' || CLA() == 'f' )
                         mwrite( CGF() );
                     else if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     state = S_BREAK;
-                    return token( floattype[word], head, hcur, strpool( memory ) );
+                    return token( C_NUM, head, hcur, strpool( memory ) );
                 }
                 break;
             case S_CONSTHEX:
                 if( is_hexaldigit( CLA() ) ) {
                     mwrite( CGF() );
                 } else if( CLA() ) {
-                    int sign = 0, word = 0;
                     if( CLA() == 'U' || CLA() == 'u' )
-                        sign++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     if( CLA() == 'L' || CLA() == 'l' )
-                        word++, mwrite( CGF() );
+                        mwrite( CGF() );
                     state = S_BREAK;
-                    return token( inttype[word][sign], head, hcur, strpool( memory ) );
+                    return token( C_NUM, head, hcur, strpool( memory ) );
                 }
                 break;
             case S_STRING:
