@@ -1,6 +1,6 @@
 /*
     derive.c: derive item sets
-    Aean, 2014.7.8
+    Aean, 2014.7.9
 */
 
 #include "anccc.h"
@@ -92,7 +92,7 @@ int migrate(int set, int x){
 }
 
 char* spaces(size_t num){
-    static char buf[] = "          ";
+    static char buf[32] = "          ";
     return buf + num;
 }
 
@@ -118,7 +118,7 @@ void derive(){
                 p=p->next;
                 //printf("%Iu, %Iu\n", oldcount, familycount);
             }
-            if( !(i & 0xF) || i == oldcount - 1 ){
+            if( !(i & 0x3) ){
                 printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
                 putchar('[');
                 int n;
@@ -135,12 +135,4 @@ void derive(){
         printf(" Discovered %Iu new set.\n", familycount - oldcount);
     }
     printf("%Iu set in total.\n\n", familycount);
-}
-
-void printfamily(){
-    int i;
-    for(i=0; i<familycount; i++){
-        printset(setfamily[i]);
-        printf("--------\n");
-    }
 }

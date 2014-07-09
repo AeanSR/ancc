@@ -48,6 +48,9 @@
 		<Unit filename="anutl.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="parsetbl.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

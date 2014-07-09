@@ -39,6 +39,9 @@ extern symbol_t terminal_list[];
 extern symbol_t nonterminal_list[];
 extern rule_t rule_list[];
 
+#define IST(v) ((v)>=IDENT && (v)<=NAL)
+#define ISNT(v) ((v)>=string_literal && (v)<EOL)
+
 int* FIRST(int nonterm);
 char* nameofsym(int sym);
 void printitem(item_t* item);
@@ -52,10 +55,11 @@ item_t* conitem(int rule, int p, int la);
 void delset(itemset_t* set);
 
 void derive();
-void printfamily();
-
-#define IST(v) ((v)>=IDENT && (v)<=NAL)
-#define ISNT(v) ((v)>=string_literal && (v)<EOL)
+int migrate(int set, int x);
+extern itemset_t** setfamily;
+extern size_t familycount;
+char* spaces(size_t num);
+void writetbl();
 
 enum{
     IDENT,
@@ -76,6 +80,7 @@ enum{
     PUNC21, PUNC22, PUNC23, PUNC24, PUNC25, PUNC26, PUNC27, PUNC28, PUNC29, PUNC30,
     PUNC31, PUNC32, PUNC33, PUNC34, PUNC35, PUNC36, PUNC37, PUNC38, PUNC39, PUNC40,
     PUNC41, PUNC42, PUNC43, PUNC44, PUNC45, PUNC46, PUNC47, PUNC48,
+    typedef_name,
     NAL,
     string_literal,
     constant,
@@ -130,7 +135,6 @@ enum{
     abstract_declarator,
     direct_abstract_declarator,
     direct_abstract_declarator_final,
-    typedef_name,
     initializer,
     initializer_list,
     designation,

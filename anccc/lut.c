@@ -16,7 +16,9 @@ symbol_t terminal_list[] = {
     K(PUNC12),K(PUNC13),K(PUNC14),K(PUNC15),K(PUNC16),K(PUNC17),K(PUNC18),K(PUNC19),K(PUNC20),K(PUNC21),K(PUNC22),
     K(PUNC23),K(PUNC24),K(PUNC25),K(PUNC26),K(PUNC27),K(PUNC28),K(PUNC29),K(PUNC30),K(PUNC31),K(PUNC32),K(PUNC33),
     K(PUNC34),K(PUNC35),K(PUNC36),K(PUNC37),K(PUNC38),K(PUNC39),K(PUNC40),K(PUNC41),K(PUNC42),K(PUNC43),K(PUNC44),
-    K(PUNC45),K(PUNC46),K(PUNC47),K(PUNC48),K(NAL),
+    K(PUNC45),K(PUNC46),K(PUNC47),K(PUNC48),
+    K(typedef_name),
+    K(NAL),
     {EOL, NULL}
 };
 symbol_t nonterminal_list[] = {
@@ -73,7 +75,6 @@ symbol_t nonterminal_list[] = {
     K(abstract_declarator),
     K(direct_abstract_declarator),
     K(direct_abstract_declarator_final),
-    K(typedef_name),
     K(initializer),
     K(initializer_list),
     K(designation),
@@ -101,7 +102,7 @@ rule_t rule_list[] = {
     R(whole_file, translation_unit),
     R(string_literal, C_STRING),
     R(string_literal, string_literal, C_STRING),
-    R(constant, IDENT),
+    //R(constant, IDENT),
     R(constant, C_NUM),
     R(constant, C_CHAR),
     R(primary_expression, IDENT),
@@ -291,7 +292,7 @@ rule_t rule_list[] = {
     R(direct_abstract_declarator_final, PUNC1, PUNC12, PUNC2),
     R(direct_abstract_declarator_final, PUNC3, parameter_type_list, PUNC4),
     R(direct_abstract_declarator_final, PUNC3, PUNC4),
-    R(typedef_name, IDENT),
+    //R(typedef_name, IDENT),
     R(initializer, assignment_expression),
     R(initializer, PUNC5, initializer_list, PUNC6),
     R(initializer, PUNC5, initializer_list, PUNC46, PUNC6),

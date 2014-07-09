@@ -49,4 +49,8 @@ int main(){
            );
     printf("\n");
     derive();
+    printf("\n");
+    writetbl();
+    printf("\nTable saved as \"parsetbl.c\". Enjoy!");
+    return 0;
 }
