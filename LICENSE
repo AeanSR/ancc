@@ -1,6 +1,4 @@
-The MIT License (MIT)
-
-
+ancc project is a minimalist C compiler, with a set of tools for building such a compiler. All components of ancc project are licensed under the terms of the MIT License, including the compiler "ancc", the library "anlibc" and the parser generator "anccc".
 Copyright (c) 2014 Aean <v@aean.net>
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

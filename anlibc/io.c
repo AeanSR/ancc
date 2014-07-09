@@ -3,7 +3,7 @@
     Aean, 2014.7.3
     This file is part of anlibc, which itself is part of ancc project.
     ancc project is licensed under the terms of the MIT License.
-    Copyright (C) 2014 Aean & HUST
+    Copyright (C) 2014 Aean
 */
 
 #include "anlibc.h"
