@@ -43,11 +43,10 @@ int main(){
     printf(
            "anccc: another noobish C compiler's compiler.\n"
            "Aean, 2014 <v@aean.net>\n"
-           "anccc is part of ancc project, which is licensed under the terms of MIT License."
-           "You should have recieved a copy of the license. If not, please visit            "
+           "anccc is part of ancc project, which is licensed under the terms of the MIT     "
+           "License. You should have recieved a copy of the license. If not, please visit   "
            "<http://mit-license.org/>.\n"
            );
     printf("\n");
-    printf("Discovering the Canonical LR(1) item set family.\n");
     derive();
 }
