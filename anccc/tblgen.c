@@ -19,7 +19,7 @@ char* action(int state, int sym, char* act){
                        "Conflict encountered at state %d symbol %s.\n", state, nameofsym(sym));
                 printitem(pconflict);
                 printitem(p);
-                printf("The conflict is %s versus %s, which one do you want to preserve?[1/2]:", act, tact);
+                printf("Please give a manual choose between %s versus %s?[1/2, default 1]:", act, tact);
                 scanf("%c", &sel);
                 while(getchar()!='\n');
                 if(sel=='2'){
@@ -38,7 +38,7 @@ char* action(int state, int sym, char* act){
                        "Conflict encountered at state %d symbol %s.\n", state, nameofsym(sym));
                 printitem(pconflict);
                 printitem(p);
-                printf("The conflict is %s versus %s, which one do you want to preserve?[1/2]:", act, tact);
+                printf("Please give a manual choose between %s versus %s?[1/2, default 1]:", act, tact);
                 scanf("%c", &sel);
                 while(getchar()!='\n');
                 if(sel=='2'){
@@ -57,7 +57,7 @@ char* action(int state, int sym, char* act){
                        "Conflict encountered at state %d symbol %s.\n", state, nameofsym(sym));
                 printitem(pconflict);
                 printitem(p);
-                printf("The conflict is %s versus %s, which one do you want to preserve?[1/2]:", act, tact);
+                printf("Please give a manual choose between %s versus %s?[1/2, default 1]:", act, tact);
                 scanf("%c", &sel);
                 while(getchar()!='\n');
                 if(sel=='2'){

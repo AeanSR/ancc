@@ -51,6 +51,11 @@ typedef struct{
     char* val;
 } token_t;
 token_t token(int no, char* pos, sourceline_t* cur, char* val);
+typedef struct rule_t{
+    int left;
+    int r[10];
+} rule_t;
+
 /*
 typedef struct _variadic_arg_1_t{
     int d;
@@ -114,7 +119,7 @@ enum{
     PUNC21, PUNC22, PUNC23, PUNC24, PUNC25, PUNC26, PUNC27, PUNC28, PUNC29, PUNC30,
     PUNC31, PUNC32, PUNC33, PUNC34, PUNC35, PUNC36, PUNC37, PUNC38, PUNC39, PUNC40,
     PUNC41, PUNC42, PUNC43, PUNC44, PUNC45, PUNC46, PUNC47, PUNC48,
-    typedef_name,
+    typedef_name, /** typedef_name is distinguished by lexer */
     NAL,
     string_literal,
     constant,

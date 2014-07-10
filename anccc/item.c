@@ -151,6 +151,7 @@ void printitem(item_t* item){
         if ( i==item->p ) printf(" .");
         printf(" %s", nameofsym(rule_list[item->rule].r[i]));
     }
+    if(rule_list[item->rule].r[item->p]==EOL) printf(" . ");
     printf(", %s\n", nameofsym(item->la));
 }
 
