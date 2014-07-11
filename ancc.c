@@ -14,11 +14,13 @@ int main(){
     push_file("anlex.c");
     preprocess();
     read_source();
-    do{
-        t = lexparse();
-        if (t.no==NAL) break;
-        printf("%s %d \"%s\"\n", t.val, t.cur->lno, t.cur->fname);
-    }while(1);
+    while(1){
+        char c;
+        scanf("%c", &c);
+        while(getchar()!='\n');
+        t = c == '1' ? tla() : tgf() ;
+        printf("%s ", t.val);
+    }
 /*    read_source();
     while((t=CGF())){
         putchar(t);

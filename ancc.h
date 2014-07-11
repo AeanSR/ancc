@@ -30,12 +30,12 @@ typedef struct{
 } keyword_t;
 typedef struct pool_t{
     struct pool_t* next;
-    char* val;
+    const char* val;
 } pool_t;
 typedef struct sourceline_t{
-    char* source;
+    const char* source;
     int lno;
-    char* fname;
+    const char* fname;
     struct sourceline_t* next;
 } sourceline_t;
 typedef struct sourcefile_t{
@@ -46,11 +46,11 @@ typedef struct sourcefile_t{
 } sourcefile_t;
 typedef struct{
     int no;
-    char* pos;
+    const char* pos;
     sourceline_t* cur;
-    char* val;
+    const char* val;
 } token_t;
-token_t token(int no, char* pos, sourceline_t* cur, char* val);
+token_t token(int no, const char* pos, sourceline_t* cur, const char* val);
 typedef struct rule_t{
     int left;
     int r[10];
@@ -63,7 +63,7 @@ typedef struct _variadic_arg_1_t{
 */
 extern char* memory;
 extern keyword_t keylist[];
-extern char* source;
+extern const char* source;
 extern sourceline_t* cur;
 extern int error_occured;
 extern int warning_occured;
@@ -92,7 +92,7 @@ void push_file(const char* filename __ANCC_BY_VAL);
 void pop_file();
 void mwrite(char s);
 void mclear();
-char* strpool(const char* str __ANCC_BY_VAL);
+const char* strpool(const char* str __ANCC_BY_VAL);
 
 void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... );
 void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... );
@@ -197,6 +197,8 @@ enum{
 };
 
 void preprocess();
-token_t lexparse();
+int typedef_add(const char* s);
+token_t tla();
+token_t tgf();
 
 #endif /* Guard word. */

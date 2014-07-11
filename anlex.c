@@ -5,6 +5,41 @@
 
 #include "ancc.h"
 
+/* == Typedef name recognizer. ==================== */
+pool_t* typedef_name_pool = 0;
+int typedef_add(const char* s){
+    if (!typedef_name_pool){
+        typedef_name_pool = calloc(sizeof(pool_t), 1);
+        if (!typedef_name_pool) badalloc();
+        typedef_name_pool->val = strpool(s);
+        return 0;
+    }else{
+        pool_t* p = typedef_name_pool;
+        while(p->next){
+            if (p->val == s) return 1;
+            p = p->next;
+        }
+        if (p->val == s) return 1;
+        p->next = calloc(sizeof(pool_t), 1);
+        if (!p->next) badalloc();
+        p->next->val = s;
+        return 0;
+    }
+}
+int typedef_recognize(const char* s){
+    if (!typedef_name_pool){
+        return 0;
+    }else{
+        pool_t* p = typedef_name_pool;
+        while(p->next){
+            if (p->val == s) return 1;
+            p = p->next;
+        }
+        if (p->val == s) return 1;
+        return 0;
+    }
+}
+
 /* == Lexical parser. ============================= */
 token_t lexparse() {
     enum {
@@ -26,7 +61,7 @@ token_t lexparse() {
     int i = 0;
     int lmidx;
     size_t lmlen, len;
-    char* head;
+    const char* head;
     sourceline_t* hcur;
 
     mclear();
@@ -107,8 +142,9 @@ token_t lexparse() {
                 if( is_alphabet( CLA() ) || is_digit( CLA() ) || CLA() == '_' ) {
                     mwrite( CGF() );
                 } else if( CLA() ) {
+                    const char* pool = strpool( memory );
                     state = S_BREAK;
-                    return token( IDENT, head, hcur, strpool( memory ) );
+                    return token( typedef_recognize(pool) ? typedef_name : IDENT, head, hcur, pool );
                 }
                 break;
             case S_CONSTNUM:
@@ -301,4 +337,24 @@ token_t lexparse() {
             }
     }
     return token( NAL, 0, 0, 0 );
+}
+
+/* == Lexical driver. ============================= */
+token_t tokbuf;
+int tokbuffered = 0;
+token_t tla(){
+    if (tokbuffered)
+        return tokbuf;
+    else{
+        tokbuffered = 1;
+        tokbuf = lexparse();
+        return tokbuf;
+    }
+}
+token_t tgf(){
+    if (tokbuffered){
+        tokbuffered = 0;
+        return tokbuf;
+    }else
+        return lexparse();
 }

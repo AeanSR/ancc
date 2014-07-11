@@ -12,7 +12,7 @@ void badalloc() {
 }
 
 /* == Source file stream. ========================= */
-char* source = 0;
+const char* source = 0;
 sourceline_t* cur = 0;
 sourceline_t* intl_s = 0;
 
@@ -21,7 +21,7 @@ typedef struct linkstring_t {
     struct linkstring_t* next;
 } linkstring_t;
 
-char* read_line( FILE* f ) {
+const char* read_line( FILE* f ) {
     linkstring_t first;
     linkstring_t* head = &first, *p, *q;
     char c;
@@ -126,7 +126,7 @@ char _gc( int fwd ) {
 }
 char _lagc( size_t k ) {
     sourceline_t* bkcur = cur;
-    char* bksource = source;
+    const char* bksource = source;
     char ch;
     while( k-- > 0 ) _gc( 1 );
     ch = _gc( 0 );
@@ -211,7 +211,7 @@ void mclear() {
 }
 
 /* == String Pool ================================= */
-char* strpool( const char* str __ANCC_BY_VAL ) {
+const char* strpool( const char* str __ANCC_BY_VAL ) {
     static pool_t* pool = 0;
     pool_t* p = pool;
     if ( p ) {
@@ -252,7 +252,7 @@ void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... ){
     warning_occured++;
 }
 void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), va_list vl ) {
-    char* p;
+    const char* p;
     char buffer[256] = {0};
 
     /*
@@ -280,7 +280,7 @@ void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256)
 }
 
 /* == token_t constructor. ======================== */
-token_t token( int no, char* pos, sourceline_t* cur, char* val ) {
+token_t token( int no, const char* pos, sourceline_t* cur, const char* val ) {
     token_t t;
     t.no = no;
     t.pos = pos;
