@@ -14,13 +14,8 @@ int main(){
     push_file("anlex.c");
     preprocess();
     read_source();
-    while(1){
-        char c;
-        scanf("%c", &c);
-        while(getchar()!='\n');
-        t = c == '1' ? tla() : tgf() ;
-        printf("%s ", t.val);
-    }
+    lr1();
+    printf("%d errors, %d warnings\n", error_occured, warning_occured);
 /*    read_source();
     while((t=CGF())){
         putchar(t);

@@ -45,6 +45,9 @@
 		<Unit filename="anprp.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="ansyn.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="anutl.c">
 			<Option compilerVar="CC" />
 		</Unit>

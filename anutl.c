@@ -11,6 +11,17 @@ void badalloc() {
     exit( -1 );
 }
 
+/* == Value to name. ============================== */
+char* keyname(int no){
+    int i = 0;
+    while(keylist[i].name){
+        if (keylist[i].no == no)
+            return keylist[i].name;
+        i++;
+    }
+    return 0;
+}
+
 /* == Source file stream. ========================= */
 const char* source = 0;
 sourceline_t* cur = 0;
@@ -237,23 +248,23 @@ const char* strpool( const char* str __ANCC_BY_VAL ) {
 /* == Error report. =============================== */
 int error_occured = 0;
 int warning_occured = 0;
-void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... ){
+void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
     va_list vl;
     va_start(vl, message);
     eprintf(1, message, vl);
     va_end(vl);
     error_occured++;
 }
-void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... ){
+void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
     va_list vl;
     va_start(vl, message);
     eprintf(0, message, vl);
     va_end(vl);
     warning_occured++;
 }
-void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), va_list vl ) {
+void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl ) {
     const char* p;
-    char buffer[256] = {0};
+    char buffer[1024] = {0};
 
     /*
         Use the same error output format from GCC:
@@ -262,18 +273,18 @@ void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256)
                              ^   <-- a mark pointing to where error occurred.
     */
 
-    vsnprintf( buffer, 256, message, vl );
+    vsnprintf( buffer, 1024, message, vl );
     printf( "\n%s:%d:%u: %s: %s\n",
-            cur->fname,
-            cur->lno,
-            1U + ( unsigned )( ( uintptr_t )source - ( uintptr_t )cur->source ),
+            tla().cur->fname,
+            tla().cur->lno,
+            1U + ( unsigned )( ( uintptr_t )tla().pos - ( uintptr_t )tla().cur->source ),
             type ? "error" : "warning" ,
             buffer );
 
-    printf( "%s\n", cur->source );
+    printf( "%s\n", tla().cur->source );
 
-    p = cur->source;
-    while( p++ < source )
+    p = tla().cur->source;
+    while( p++ < tla().pos )
         putchar( ' ' );
     putchar( '^' );
     putchar( '\n' );
@@ -314,6 +325,7 @@ int is_alphabet( char c ) {
     return is_uppercase( c ) || is_lowercase( c );
 }
 
+/* == Path to MSVC. =============================== */
 char* vc_dir_path(){
     char* dir = 0;
     static char* out = 0;

@@ -63,10 +63,13 @@ typedef struct _variadic_arg_1_t{
 */
 extern char* memory;
 extern keyword_t keylist[];
+extern rule_t rule_list[];
 extern const char* source;
 extern sourceline_t* cur;
 extern int error_occured;
 extern int warning_occured;
+extern const int action_tbl[][91];
+extern const int goto_tbl[][72];
 
 int is_digit(char c);
 int is_octaldigit(char c);
@@ -94,12 +97,12 @@ void mwrite(char s);
 void mclear();
 const char* strpool(const char* str __ANCC_BY_VAL);
 
-void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... );
-void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), ... );
-void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(256), va_list vl );
+void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
+void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
+void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl );
 
 char* vc_dir_path();
-
+char* keyname(int no);
 enum{
     IDENT,
     C_CHAR,     C_STRING,
@@ -196,9 +199,12 @@ enum{
     EOL,
 };
 
+#define familycount 2022
+
 void preprocess();
 int typedef_add(const char* s);
 token_t tla();
 token_t tgf();
+void lr1();
 
 #endif /* Guard word. */
