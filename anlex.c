@@ -5,6 +5,11 @@
 
 #include "ancc.h"
 
+#undef err
+#define err err_c
+#undef warn
+#define warn warn_c
+
 /* == Typedef name recognizer. ==================== */
 pool_t* typedef_name_pool = 0;
 int typedef_add(const char* s){

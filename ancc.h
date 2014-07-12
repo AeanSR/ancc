@@ -97,9 +97,13 @@ void mwrite(char s);
 void mclear();
 const char* strpool(const char* str __ANCC_BY_VAL);
 
-void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
-void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
-void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl );
+void err_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
+void warn_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
+void err_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
+void warn_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
+#define err err_t
+#define warn warn_t
+void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl );
 
 char* vc_dir_path();
 char* keyname(int no);

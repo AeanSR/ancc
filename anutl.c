@@ -248,21 +248,35 @@ const char* strpool( const char* str __ANCC_BY_VAL ) {
 /* == Error report. =============================== */
 int error_occured = 0;
 int warning_occured = 0;
-void err( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+void err_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
     va_list vl;
     va_start(vl, message);
-    eprintf(1, message, vl);
+    eprintf(tla(), 1, message, vl);
     va_end(vl);
     error_occured++;
 }
-void warn( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+void warn_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
     va_list vl;
     va_start(vl, message);
-    eprintf(0, message, vl);
+    eprintf(tla(), 0, message, vl);
     va_end(vl);
     warning_occured++;
 }
-void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl ) {
+void err_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    eprintf(token(0, source, cur, 0) , 1, message, vl);
+    va_end(vl);
+    error_occured++;
+}
+void warn_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    eprintf(token(0, source, cur, 0), 0, message, vl);
+    va_end(vl);
+    warning_occured++;
+}
+void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl ) {
     const char* p;
     char buffer[1024] = {0};
 
@@ -275,16 +289,16 @@ void eprintf( int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024
 
     vsnprintf( buffer, 1024, message, vl );
     printf( "\n%s:%d:%u: %s: %s\n",
-            tla().cur->fname,
-            tla().cur->lno,
-            1U + ( unsigned )( ( uintptr_t )tla().pos - ( uintptr_t )tla().cur->source ),
+            tok.cur->fname,
+            tok.cur->lno,
+            1U + ( unsigned )( ( uintptr_t )tok.pos - ( uintptr_t )tok.cur->source ),
             type ? "error" : "warning" ,
             buffer );
 
-    printf( "%s\n", tla().cur->source );
+    printf( "%s\n", tok.cur->source );
 
-    p = tla().cur->source;
-    while( p++ < tla().pos )
+    p = tok.cur->source;
+    while( p++ < tok.pos )
         putchar( ' ' );
     putchar( '^' );
     putchar( '\n' );

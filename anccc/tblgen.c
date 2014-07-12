@@ -90,7 +90,7 @@ void writetbl(){
             "#define ACC (2147483647)\n"
             "#define R(v) ((v) + %Iu) /* familycount = %Iu */\n"
             "#define E(v) (-((v)+1))\n\n", familycount, familycount);
-    fprintf(f, "static const int action_tbl[][%d] = {\n", NAL + 1);
+    fprintf(f, "const int action_tbl[][%d] = {\n", NAL + 1);
     for(i=0; i < familycount; i++){
         fprintf(f, "/* state%5d", i);
         for(j=0; j<=NAL; j++){
@@ -120,7 +120,7 @@ void writetbl(){
     printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
     printf("[=====================>]\n");
     printf("\nGenerating GOTO table.\n");
-    fprintf(f, "static const int goto_tbl[][%d] = {\n", EOL - NAL - 1);
+    fprintf(f, "const int goto_tbl[][%d] = {\n", EOL - NAL - 1);
     for(i=0; i < familycount; i++){
         fprintf(f, "/* state%5d", i);
         for(j=NAL+1; j<EOL; j++){
