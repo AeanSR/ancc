@@ -36,16 +36,16 @@ void lrreduce(int rno){
         exit(-1);
     }
     lrp -= rightlen;
-    //printf("\tstate %d, reduce %d, goto = %d\n", lrstate(), rightlen, goto_tbl[lrstate()][rule.left - NAL - 1]);
+    printf("\tstate %d, reduce %d, goto = %d\n", lrstate(), rightlen, goto_tbl[lrstate()][rule.left - NAL - 1]);
     lrpush( goto_tbl[lrstate()][rule.left - NAL - 1] );
 }
 
 void lr1(){
     lrpush(0);
     while(1){
-        //while(getchar()!='\n');
+        while(getchar()!='\n');
         int item = action_tbl[lrstate()][tla().no];
-        //printf("state %d, meet %s, action = %d\n", lrstate(), tla().val, item);
+        printf("state %d, meet %s, action = %d\n", lrstate(), tla().val, item);
         if(item == 2147483647){
             printf("success.\n");
             return;
@@ -97,11 +97,11 @@ void lr1(){
             return;
         }else if(item >= 0 && item < familycount){
             lrpush(item);
-            //printf("\tshift %s\n", tla().val);
+            printf("\tshift %s\n", tla().val);
             tgf();
         }else{
             item -= familycount;
-            //printf("\treduce %d\n", item);
+            printf("\treduce %d\n", item);
             lrreduce(item);
         }
     }

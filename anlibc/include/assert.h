@@ -18,7 +18,7 @@
 #else /* NDEBUG */
 #define __ANLIBC_STR2(v) #v
 #define __ANLIBC_STR(v) __ANLIBC_STR2(v)
-#define assert(expression) if(!expression){fprintf(stderr, \
+#define assert(expression) if(!(expression)){fprintf(stderr, \
         "Assertion failed: %s, function %s, file %s, line %d.\n", \
         __ANLIBC_STR(expression), __func__, __FILE__, __LINE__)}else
 #endif /* NDEBUG-else */

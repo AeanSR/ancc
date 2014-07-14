@@ -11,7 +11,7 @@
 
 int main(){
     token_t t;
-    push_file("anlex.c");
+    push_file("test.c");
     preprocess();
     read_source();
     lr1();
