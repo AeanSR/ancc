@@ -248,38 +248,14 @@ const char* strpool( const char* str __ANCC_BY_VAL ) {
 /* == Error report. =============================== */
 int error_occured = 0;
 int warning_occured = 0;
-void err_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
-    va_list vl;
-    va_start(vl, message);
-    eprintf(tla(), 1, message, vl);
-    va_end(vl);
-    error_occured++;
-}
-void warn_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
-    va_list vl;
-    va_start(vl, message);
-    eprintf(tla(), 0, message, vl);
-    va_end(vl);
-    warning_occured++;
-}
-void err_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
-    va_list vl;
-    va_start(vl, message);
-    eprintf(token(0, source, cur, 0) , 1, message, vl);
-    va_end(vl);
-    error_occured++;
-}
-void warn_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
-    va_list vl;
-    va_start(vl, message);
-    eprintf(token(0, source, cur, 0), 0, message, vl);
-    va_end(vl);
-    warning_occured++;
-}
-void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl ) {
+void veprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl ) {
     const char* p;
     char buffer[1024] = {0};
-
+    static char* typestr[] = {
+        "warning",
+        "error",
+        "note",
+    };
     /*
         Use the same error output format from GCC:
             <filename>:<line>:<offset>: <message>
@@ -292,7 +268,7 @@ void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SI
             tok.cur->fname,
             tok.cur->lno,
             1U + ( unsigned )( ( uintptr_t )tok.pos - ( uintptr_t )tok.cur->source ),
-            type ? "error" : "warning" ,
+            typestr[type] ,
             buffer );
 
     printf( "%s\n", tok.cur->source );
@@ -302,6 +278,40 @@ void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SI
         putchar( ' ' );
     putchar( '^' );
     putchar( '\n' );
+}
+void err_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    veprintf(tla(), 1, message, vl);
+    va_end(vl);
+    error_occured++;
+}
+void warn_t( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    veprintf(tla(), 0, message, vl);
+    va_end(vl);
+    warning_occured++;
+}
+void err_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    veprintf(token(0, source, cur, 0) , 1, message, vl);
+    va_end(vl);
+    error_occured++;
+}
+void warn_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    veprintf(token(0, source, cur, 0), 0, message, vl);
+    va_end(vl);
+    warning_occured++;
+}
+void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... ){
+    va_list vl;
+    va_start(vl, message);
+    veprintf(tok, type, message, vl);
+    va_end(vl);
 }
 
 /* == token_t constructor. ======================== */

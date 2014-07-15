@@ -103,7 +103,10 @@ void err_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
 void warn_c( const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
 #define err err_t
 #define warn warn_t
-void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), va_list vl );
+#define EPRINTF_WARNING (0)
+#define EPRINTF_ERROR (1)
+#define EPRINTF_NOTE (2)
+void eprintf( token_t tok, int type, const char* message __ANCC_BY_VAL __ANCC_SIZE_LIMIT(1024), ... );
 
 char* vc_dir_path();
 char* keyname(int no);
@@ -206,9 +209,93 @@ enum{
 #define familycount 2022
 
 void preprocess();
-int typedef_add(const char* s);
 token_t tla();
 token_t tgf();
 void lr1();
+
+/* Symbol management. */
+enum{
+    TYPESPEC_NUM,
+    TYPESPEC_AGGREGATE,
+    TYPESPEC_FUNCTION,
+    TYPESPEC_POINTER,
+    TYPESPEC_ARRAY,
+};
+typedef struct type_t{
+    int spec;
+    int qualifier;
+    union{
+        struct{
+            int size;
+            int sign;
+        } as_num;
+        struct{
+            int is_union;
+            struct type_list{
+                struct type_t* type;
+                struct type_list* next;
+            }* memberlist;
+        } as_aggregate;
+        struct{
+            int is_inline;
+            struct type_t* returntype;
+            struct type_list* parameterlist;
+        } as_function;
+        struct{
+            struct type_t* pointee;
+        } as_pointer;
+        struct{
+            struct type_t* elemtype;
+            int subscribe;
+        } as_array;
+    } u;
+} type_t;
+
+int type_equal( type_t* t1, type_t* t2 );
+enum{
+    SYMBOL_TYPEDEF,
+    SYMBOL_AGGREGATE,
+    SYMBOL_VARIABLE,
+    SYMBOL_LABEL,
+};
+typedef struct{
+    const char* name;
+    sourceline_t* cur;
+    const char* pos;
+    int storagespec;
+    int attribute;
+    union{
+        struct{
+            type_t* type;
+        } as_typedef;
+        struct{
+            type_t* type;
+        } as_aggregate;
+        struct{
+            type_t* type;
+            size_t memaddr;
+        } as_variable;
+        struct{
+            int placeholder;
+        } as_label;
+    } u;
+} symbol_t;
+
+typedef struct symbol_list_t{
+    symbol_t* symbol;
+    struct symbol_list_t* next;
+} symbol_list_t;
+
+typedef struct symbol_scope_t{
+    symbol_list_t* symbol_list;
+    struct symbol_scope_t* next;
+    struct symbol_scope_t* prev;
+} symbol_scope_t;
+
+symbol_t* lookup_symbol(const char* name, int attribute);
+void push_scope();
+void pop_scope();
+void add_symbol(symbol_t* newsymbol);
+symbol_t* create_typedef_symbol(type_t* type, token_t tok);
 
 #endif /* Guard word. */

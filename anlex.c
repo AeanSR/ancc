@@ -10,41 +10,6 @@
 #undef warn
 #define warn warn_c
 
-/* == Typedef name recognizer. ==================== */
-pool_t* typedef_name_pool = 0;
-int typedef_add(const char* s){
-    if (!typedef_name_pool){
-        typedef_name_pool = calloc(sizeof(pool_t), 1);
-        if (!typedef_name_pool) badalloc();
-        typedef_name_pool->val = strpool(s);
-        return 0;
-    }else{
-        pool_t* p = typedef_name_pool;
-        while(p->next){
-            if (p->val == s) return 1;
-            p = p->next;
-        }
-        if (p->val == s) return 1;
-        p->next = calloc(sizeof(pool_t), 1);
-        if (!p->next) badalloc();
-        p->next->val = s;
-        return 0;
-    }
-}
-int typedef_recognize(const char* s){
-    if (!typedef_name_pool){
-        return 0;
-    }else{
-        pool_t* p = typedef_name_pool;
-        while(p->next){
-            if (p->val == s) return 1;
-            p = p->next;
-        }
-        if (p->val == s) return 1;
-        return 0;
-    }
-}
-
 /* == Lexical parser. ============================= */
 token_t lexparse() {
     enum {
@@ -149,7 +114,7 @@ token_t lexparse() {
                 } else if( CLA() ) {
                     const char* pool = strpool( memory );
                     state = S_BREAK;
-                    return token( typedef_recognize(pool) ? typedef_name : IDENT, head, hcur, pool );
+                    return token( lookup_symbol(pool, SYMBOL_TYPEDEF) ? typedef_name : IDENT, head, hcur, pool );
                 }
                 break;
             case S_CONSTNUM:
