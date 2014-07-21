@@ -5,27 +5,33 @@
 
 #include "ancc.h"
 
-int* lrstack;
+typedef struct lrstack_t{
+    int state;
+    token_t lex;
+    struct lrstack_t* next;
+} lrstack_t;
+
+lrstack_t* lrstack = 0;
 size_t lrmax = 4096;
 size_t lrp = 0;
 int lrstate(){
-    if(lrstack && lrp) return lrstack[lrp - 1];
+    if(lrstack && lrp) return lrstack[lrp - 1].state;
     printf("internal error: lr stack don't have any states yet\n");
     exit(-1);
 }
-void lrpush(int state){
+void lrpush(int state, token_t tok){
     if (!lrstack){
-        lrstack = calloc(lrmax, sizeof(int));
-        if(!lrstack) badalloc();
+        lrstack = calloc(lrmax, sizeof(lrstack_t));
+        if (!lrstack) badalloc();
     }else if(lrp >= lrmax){
-        int* newbase = calloc(lrmax * 2, sizeof(int));
-        if(!newbase) badalloc();
-        memcpy(newbase, lrstack, lrmax * sizeof(int));
+        int* newbase = calloc(lrmax * 2, sizeof(lrstack_t));
+        if (!newbase) badalloc();
+        memcpy(newbase, lrstack, lrmax * sizeof(lrstack_t));
         free(lrstack);
         lrstack = newbase;
         lrmax *= 2;
     }
-    lrstack[lrp++] = state;
+    lrstack[lrp++] = (lrstack_t){ .state = state, .lex = tok};
 }
 void lrreduce(int rno){
     rule_t rule = rule_list[rno];

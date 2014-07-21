@@ -32,6 +32,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="anast.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="ancc.c">
 			<Option compilerVar="CC" />
 		</Unit>

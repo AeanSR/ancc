@@ -215,6 +215,7 @@ void lr1();
 
 /* Symbol management. */
 enum{
+    TYPESPEC_VOID,
     TYPESPEC_NUM,
     TYPESPEC_AGGREGATE,
     TYPESPEC_FUNCTION,
