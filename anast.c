@@ -5,3 +5,11 @@
 
 #include "ancc.h"
 
+typedef struct astnode_t{
+    int spec;
+    union {
+        struct {
+
+        } declarator_specifier;
+    } u;
+} astnode_t;

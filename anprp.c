@@ -27,7 +27,7 @@ void preprocess(){
     sprintf(cl_option, "cl.exe "
             "/X /I%sanlibc\\include "
             "/u /DWIN32 /D_WIN32 /D_CONSOLE /D__ANCC__ /D_M_IX86 "
-            "/P /Fi\"%s\" "
+            "/P /Fi\"%s\" /nologo "
             "\"%s\""
             ,
             ancc_path, ppfilename, file_name());

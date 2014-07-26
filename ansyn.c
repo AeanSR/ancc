@@ -14,17 +14,19 @@ typedef struct lrstack_t{
 lrstack_t* lrstack = 0;
 size_t lrmax = 4096;
 size_t lrp = 0;
+
 int lrstate(){
     if(lrstack && lrp) return lrstack[lrp - 1].state;
     printf("internal error: lr stack don't have any states yet\n");
     exit(-1);
 }
+
 void lrpush(int state, token_t tok){
     if (!lrstack){
         lrstack = calloc(lrmax, sizeof(lrstack_t));
         if (!lrstack) badalloc();
     }else if(lrp >= lrmax){
-        int* newbase = calloc(lrmax * 2, sizeof(lrstack_t));
+        lrstack_t* newbase = calloc(lrmax * 2, sizeof(lrstack_t));
         if (!newbase) badalloc();
         memcpy(newbase, lrstack, lrmax * sizeof(lrstack_t));
         free(lrstack);
@@ -33,6 +35,7 @@ void lrpush(int state, token_t tok){
     }
     lrstack[lrp++] = (lrstack_t){ .state = state, .lex = tok};
 }
+
 void lrreduce(int rno){
     rule_t rule = rule_list[rno];
     int rightlen = 0;
@@ -43,11 +46,11 @@ void lrreduce(int rno){
     }
     lrp -= rightlen;
     printf("\tstate %d, reduce %d, goto = %d\n", lrstate(), rightlen, goto_tbl[lrstate()][rule.left - NAL - 1]);
-    lrpush( goto_tbl[lrstate()][rule.left - NAL - 1] );
+    lrpush( goto_tbl[lrstate()][rule.left - NAL - 1], token(0, 0, 0, 0) );
 }
 
 void lr1(){
-    lrpush(0);
+    lrpush(0, token(0, 0, 0, 0));
     while(1){
         while(getchar()!='\n');
         int item = action_tbl[lrstate()][tla().no];
@@ -102,7 +105,7 @@ void lr1(){
             err("syntax error, expected %s but given %s", expected, given);
             return;
         }else if(item >= 0 && item < familycount){
-            lrpush(item);
+            lrpush(item, tla());
             printf("\tshift %s\n", tla().val);
             tgf();
         }else{
