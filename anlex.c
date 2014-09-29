@@ -28,9 +28,6 @@ token_t lexparse() {
         S_COMMENT_SLASH,
     };
     int state = S_BREAK;
-    int i = 0;
-    int lmidx;
-    size_t lmlen, len;
     const char* head;
     sourceline_t* hcur;
 
@@ -48,9 +45,6 @@ token_t lexparse() {
         } else switch( state ) {
             case S_BREAK:
                 mclear();
-                lmidx = -1;
-                lmlen = 0;
-                i = 0;
                 if( CLA() == '/' && CLA( 1 ) == '/' ) {
                     state = S_COMMENT_SLASH;
                     CGF( 2 );
@@ -59,21 +53,6 @@ token_t lexparse() {
                     state = S_COMMENT_STAR;
                     CGF( 2 );
                     break;
-                } else {
-                    while( keylist[i].no != NAL ) {
-                        len = strlen( keylist[i].name );
-                        if( len > lmlen )
-                            if( 0 == strncmp( keylist[i].name, source, len ) ) {
-                                lmlen = len;
-                                lmidx = i;
-                            }
-                        i++;
-                    }
-                    if( lmidx != -1 ) {
-                        source += strlen( keylist[lmidx].name );
-                        CLA();
-                        return token( keylist[lmidx].no, head, hcur, strpool( keylist[lmidx].name ) );
-                    }
                 }
                 if( CLA() == ' ' || CLA() == '\t' || CLA() == '\r' ) {
                     CGF();
@@ -104,6 +83,22 @@ token_t lexparse() {
                     head = source;
                     hcur = cur;
                 } else if( CLA() ) {
+                    int i = 0;
+                    int lmi = -1;
+                    int lml = 0;
+                    int len = 0;
+                    while(keylist[i].name) {
+                        len = strlen(keylist[i].name);
+                        if(len > lml && 0 == strncmp(source, keylist[i].name, len)) {
+                            lmi = i;
+                            lml = len;
+                        }
+                        i++;
+                    }
+                    if (lmi != -1) {
+                        CGF(lml);
+                        return token(keylist[lmi].no, head, hcur, keylist[lmi].name);
+                    }
                     err( "unexpected token '%c'(0x%02X)", CLA(), ( unsigned )CLA() );
                     CGF();
                 }
@@ -112,8 +107,14 @@ token_t lexparse() {
                 if( is_alphabet( CLA() ) || is_digit( CLA() ) || CLA() == '_' ) {
                     mwrite( CGF() );
                 } else if( CLA() ) {
+                    int i = 0;
                     const char* pool = strpool( memory );
                     state = S_BREAK;
+                    while(keylist[i].name) {
+                        if(pool == keylist[i].name)
+                            return token( keylist[i].no, head, hcur, pool );
+                        i++;
+                    }
                     return token( lookup_symbol(pool, SYMBOL_TYPEDEF) ? typedef_name : IDENT, head, hcur, pool );
                 }
                 break;
@@ -312,19 +313,19 @@ token_t lexparse() {
 /* == Lexical driver. ============================= */
 token_t tokbuf;
 int tokbuffered = 0;
-token_t tla(){
+token_t tla() {
     if (tokbuffered)
         return tokbuf;
-    else{
+    else {
         tokbuffered = 1;
         tokbuf = lexparse();
         return tokbuf;
     }
 }
-token_t tgf(){
-    if (tokbuffered){
+token_t tgf() {
+    if (tokbuffered) {
         tokbuffered = 0;
         return tokbuf;
-    }else
+    } else
         return lexparse();
 }

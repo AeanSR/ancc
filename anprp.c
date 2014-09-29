@@ -9,7 +9,7 @@
 extern sourcefile_t* workingfile;
 
 /* == Preprocessor. =============================== */
-void preprocess(){
+void preprocess() {
     char cl_path[512];
     char cl_option[512];
     char ppfilename[512];
@@ -31,7 +31,7 @@ void preprocess(){
             "\"%s\""
             ,
             ancc_path, ppfilename, file_name());
-    printf("%s\n", cl_option);
+    //printf("%s\n", cl_option);
     ZeroMemory(&StartupInfo, sizeof(StartupInfo));
     StartupInfo.cb = sizeof(StartupInfo);
     if(CreateProcess(cl_path,cl_option, NULL,NULL,FALSE,0,NULL, NULL,&StartupInfo,&ProcessInfo)) {

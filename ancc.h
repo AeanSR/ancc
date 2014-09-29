@@ -56,11 +56,11 @@ typedef struct rule_t{
     int r[10];
 } rule_t;
 
-/*
+
 typedef struct _variadic_arg_1_t{
     int d;
 }_variadic_arg_1_t;
-*/
+
 extern char* memory;
 extern keyword_t keylist[];
 extern rule_t rule_list[];
@@ -84,10 +84,10 @@ void read_source();
 char _gc(int fwd);
 char _lagc(size_t k);
 char _gf(size_t k);
-//#define CLA(...) _lagc((_variadic_arg_1_t){__VA_ARGS__}.d)
-//#define CGF(...) _gf((_variadic_arg_1_t){__VA_ARGS__}.d==0?1:(_variadic_arg_1_t){__VA_ARGS__}.d)
-#define CLA(...) _lagc((int)(__VA_ARGS__##.1))
-#define CGF(...) _gf((int)(__VA_ARGS__##.1)?(int)(__VA_ARGS__##.1):1)
+#define CLA(...) _lagc((_variadic_arg_1_t){__VA_ARGS__}.d)
+#define CGF(...) _gf((_variadic_arg_1_t){__VA_ARGS__}.d==0?1:(_variadic_arg_1_t){__VA_ARGS__}.d)
+//#define CLA(...) _lagc((int)(__VA_ARGS__##.1))
+//#define CGF(...) _gf((int)(__VA_ARGS__##.1)?(int)(__VA_ARGS__##.1):1)
 void reset_char_stream();
 FILE* file_pointer();
 char* file_name();
